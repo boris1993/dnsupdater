@@ -2,7 +2,7 @@
 
 Obtain your current external IP address and update to the specified DNS record on CloudFlare 
 
-Primarily built for MIPS 74kc
+Primarily built for MIPS 74kc since my router has a MIPS 74kc CPU
 
 ## Usage
 
@@ -36,7 +36,23 @@ For *nix users:
 make
 ```
 
-+ Build for other platforms
+Then you will find the executable file under `bin` directory. 
+
++ Upload to your router
+
+Just upload the executable to your router via FTP or SFTP.
+
+And don't forget to give it execute permission.
+
++ Create a cron job
+
+Sure you don't want this to be a disposable product right?
+
+```crontab
+0 0,12 * * * /root/dnsupdater >> /var/log/update-dns.log
+```
+
+## Build for other platforms
 
 You can check for all preset targets by
 
