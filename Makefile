@@ -5,7 +5,7 @@ GOPATH:=$(GOPATH):$(CURDIR)
 
 PACKAGE_NAME=dnsupdater
 
-all: build-windows-amd64 build-darwin-amd64 build-linux-amd64 build-mips-softfloat
+all: build-mips-softfloat
 
 build-windows-amd64:
 	GOARCH=amd64 GOOS=windows $(GOINSTALL) $(PACKAGE_NAME)
