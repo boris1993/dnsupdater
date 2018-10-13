@@ -15,11 +15,11 @@ func GetDnsRecordIpAddress() (recordId string, address string, err error) {
 	client := &http.Client{}
 
 	req, err := http.NewRequest(http.MethodGet,
-		config.CfApiEndpoint+"/zones/"+config.CfZoneId+"/dns_records?type=A&name="+config.CfDomainName,
+		config.CfAPIEndpoint+"/zones/"+config.CfZoneID+"/dns_records?type=A&name="+config.CfDomainName,
 		nil)
 
 	req.Header.Add("X-Auth-Email", config.CfAuthEmail)
-	req.Header.Add("X-Auth-Key", config.CfApiKey)
+	req.Header.Add("X-Auth-Key", config.CfAPIKey)
 	req.Header.Add("Content-Type", "application/json")
 
 	log.Println("Fetching IP address of domain " + config.CfDomainName)
@@ -62,11 +62,11 @@ func UpdateDnsRecord(id string, address string) (status bool, err error) {
 	requestBodyReader := bytes.NewReader(updateRecordDataByte)
 
 	req, err := http.NewRequest(http.MethodPut,
-		config.CfApiEndpoint+"/zones/"+config.CfZoneId+"/dns_records/"+id,
+		config.CfAPIEndpoint+"/zones/"+config.CfZoneID+"/dns_records/"+id,
 		requestBodyReader)
 
 	req.Header.Add("X-Auth-Email", config.CfAuthEmail)
-	req.Header.Add("X-Auth-Key", config.CfApiKey)
+	req.Header.Add("X-Auth-Key", config.CfAPIKey)
 	req.Header.Add("Content-Type", "application/json")
 
 	log.Println("Updating IP address of domain " + config.CfDomainName + " to " + address)
