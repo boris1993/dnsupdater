@@ -1,16 +1,20 @@
 GOCMD=go
-GOBUILD=$(GOCMD) build
-GOINSTALL=%(GOCMD) install
-GOCLEAN=$(GOCMD) clean
-GOTEST=$(GOCMD) test
-GOGET=$(GOCMD) get
+GOINSTALL=$(GOCMD) install
 
-BINARY_NAME=dnsupdater
+GOPATH:=$(GOPATH):$(CURDIR)
 
-all: build build-mips-softfloat
+PACKAGE_NAME=dnsupdater
 
-build:
-    $(GOBUILD) -o $(BINARY_NAME) -v
+all: build-windows-amd64 build-darwin-amd64 build-linux-amd64 build-mips-softfloat
+
+build-windows-amd64:
+	GOARCH=amd64 GOOS=windows $(GOINSTALL) $(PACKAGE_NAME)
+
+build-darwin-amd64:
+	GOARCH=amd64 GOOS=darwin $(GOINSTALL) $(PACKAGE_NAME)
+
+build-linux-amd64:
+	GOARCH=amd64 GOOS=linux $(GOINSTALL) $(PACKAGE_NAME)
 
 build-mips-softfloat:
-	GOARCH=mips GOOS=linux GOMIPS=softfloat $(GOBUILD) -o $(BINARY_NAME) -v
+	GOARCH=mips GOOS=linux GOMIPS=softfloat $(GOINSTALL) $(PACKAGE_NAME)
