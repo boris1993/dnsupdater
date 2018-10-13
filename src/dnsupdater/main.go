@@ -46,7 +46,7 @@ func main() {
 func getIpAddr() string {
 	log.Println("Checking current IP address...")
 
-	resp, err := http.Get(config.IpAddrApi)
+	resp, err := http.Get(config.IPAddrAPI)
 
 	if err != nil {
 		log.Fatal(err)
