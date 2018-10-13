@@ -1,0 +1,9 @@
+package config
+
+const IpAddrApi = "https://api.ipify.org/"
+const CfApiEndpoint = "https://api.cloudflare.com/client/v4"
+
+const CfApiKey = "YOUR_CLOUD_FLARE_API_KEY"
+const CfZoneId = "ZONE_ID_OF_YOUR_DOMAIN"
+const CfAuthEmail = "EMAIL_OF_YOUR_CLOUD_FLARE_ACCOUNT"
+const CfDomainName = "FULL_DOMAIN_NAME_YOU_WANT_TO_UPDATE"
