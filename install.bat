@@ -51,11 +51,12 @@ goto do-build
 :do-build
 echo Building binary for %GOOS% running under %GOARCH%
 
-set PACKAGE_NAME=dnsupdater
+set APP_NAME=dnsupdater
+set PACKAGE_NAME=github.com/boris1993/%APP_NAME%
 
 gofmt -w src
 
-go build -o %GOPATH%/bin/%PACKAGE_NAME% -i -v %PACKAGE_NAME%
+go build -o %GOPATH%/bin/%APP_NAME% -i -v %PACKAGE_NAME%
 
 :end
 echo Build finished
