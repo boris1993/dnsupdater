@@ -12,18 +12,13 @@ set OPTION=%1
 if "%OPTION%" equ "-h" goto help
 if "%OPTION%" equ "--help" goto help
 if "%OPTION%" equ "/?" goto help
-goto env-prep
+goto :check-arch
 
 :help
 echo Usage: install.bat TARGET
 echo TARGET could be windows-amd64, mips-softfloat, linux-amd64, darwin-amd64
 echo Default target is mips-softfloat
 goto exit
-
-:env-prep
-set OLDGOPATH=%GOPATH%
-set GOPATH=%~dp0
-goto check-arch
 
 :check-arch
 if "%1"=="windows-amd64" goto build-windows-amd64
@@ -56,9 +51,17 @@ goto do-build
 :do-build
 echo Building binary for %GOOS% running under %GOARCH%
 
+set PACKAGE_NAME=dnsupdater
+
 gofmt -w src
 
-go install dnsupdater
+if [%GOMIPS%] == [] (
+    go build -o %GOPATH%/bin/%PACKAGE_NAME%_%GOOS%_%GOARCH%
+    goto end
+)
+
+go build -o %GOPATH%/bin/%PACKAGE_NAME%_%GOOS%_%GOARCH%_%GOMIPS%
+goto end
 
 :end
 echo Build finished
