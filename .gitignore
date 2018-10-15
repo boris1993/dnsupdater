@@ -1,5 +1,2 @@
 .idea
-*.iml
-bin
-pkg
-src/config/config.go
+config/config.go

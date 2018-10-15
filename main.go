@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"os"
 
-	"config"
-	"utils"
+	"dnsupdater/config"
+	"dnsupdater/utils"
 )
 
 func main() {
