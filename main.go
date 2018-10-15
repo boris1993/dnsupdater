@@ -1,4 +1,4 @@
-package dnsupdater
+package main
 
 import (
 	"io/ioutil"
