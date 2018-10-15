@@ -11,13 +11,13 @@ Primarily built for MIPS 74kc since my router has a MIPS 74kc CPU
 + Clone this repo
 
 ```bash
-git clone https://github.com/boris1993/dnsupdater.git
+go get github.com/boris1993/dnsupdater
 ```
 
 + Customize your configuration
 
 ```bash
-cd dnsupdater/src/config
+cd github.com/boris1993/dnsupdater/config
 cp config.go.template config.go
 vim config.go # Or use any text editor you like
 ```

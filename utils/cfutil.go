@@ -7,8 +7,8 @@ import (
 	"log"
 	"net/http"
 
-	"dnsupdater/config"
-	"dnsupdater/model"
+	"github.com/boris1993/dnsupdater/config"
+	"github.com/boris1993/dnsupdater/model"
 )
 
 func GetDnsRecordIpAddress() (recordId string, address string, err error) {

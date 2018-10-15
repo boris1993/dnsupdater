@@ -55,13 +55,7 @@ set PACKAGE_NAME=dnsupdater
 
 gofmt -w src
 
-if [%GOMIPS%] == [] (
-    go build -o %GOPATH%/bin/%PACKAGE_NAME%_%GOOS%_%GOARCH%
-    goto end
-)
-
-go build -o %GOPATH%/bin/%PACKAGE_NAME%_%GOOS%_%GOARCH%_%GOMIPS%
-goto end
+go build -o %GOPATH%/bin/%PACKAGE_NAME% -i -v %PACKAGE_NAME%
 
 :end
 echo Build finished
