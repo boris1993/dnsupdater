@@ -1,25 +1,39 @@
 # dnsupdater
 
+[![Build Status](https://travis-ci.org/boris1993/dnsupdater.svg?branch=master)](https://travis-ci.org/boris1993/dnsupdater)
+
 Obtain your current external IP address and update to the specified DNS record on CloudFlare 
 
 Primarily built for MIPS 74kc since my router has a MIPS 74kc CPU
 
-## Usage
+## How-to
+
+### Download pre-built binaries
+
++ Go to **Releases** and download the binary for your target
+
++ Extract the archive
+
++ Rename `config.yaml.template` to `config.yaml`
+
++ Replace your configuration in the `config.yaml`
+
++ Upload `dnsupdater` and `config.yaml` to where you want this app to run
+
++ Set up a cron job like
+
+```cron
+0 0,12 * * * /root/dnsupdater/dnsupdater > /var/log/update-dns.log 2>&1 &
+```
+
+### Build from source
 
 + Install Go
 
-+ Clone this repo
++ Get this repo
 
 ```bash
 go get github.com/boris1993/dnsupdater
-```
-
-+ Customize your configuration
-
-```bash
-cd github.com/boris1993/dnsupdater/config
-cp config.go.template config.go
-vim config.go # Or use any text editor you like
 ```
 
 + Build for MIPS 74kc
@@ -33,10 +47,10 @@ install.bat
 For *nix users:
 
 ```bash
-make
+make mips-softfloat
 ```
 
-Then you will find the executable file under `bin` directory. 
+Then you will find the executable file under `${GOPATH}/bin/dnsupdater` directory. 
 
 + Upload to your router
 
@@ -49,7 +63,7 @@ And don't forget to give it execute permission.
 Sure you don't want this to be a disposable product right?
 
 ```crontab
-0 0,12 * * * /root/dnsupdater >> /var/log/update-dns.log
+0 0,12 * * * /root/dnsupdater/dnsupdater > /var/log/update-dns.log 2>&1 &
 ```
 
 ## Build for other platforms
