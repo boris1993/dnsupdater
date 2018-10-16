@@ -57,8 +57,12 @@ SET PACKAGE_NAME=github.com/boris1993/%APP_NAME%
 IF NOT EXIST %GOPATH%\bin\%APP_NAME% (
     mkdir %GOPATH%\bin\%APP_NAME%
 )
+
+ECHO Downloading dependencies...
+go get -v
+ECHO Building...
 go build -o %GOPATH%\bin\%APP_NAME%\%APP_NAME% -i -v %PACKAGE_NAME%
-echo Copying template config file to target directory...
+ECHO Copying template config file to target directory...
 copy config.yaml.template %GOPATH%\bin\%APP_NAME%
 
 IF errorlevel 1 GOTO error

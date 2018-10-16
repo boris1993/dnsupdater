@@ -2,5 +2,3 @@ language: go
 
 notifications:
   email: false
-
-script: go get -v && make

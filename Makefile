@@ -8,12 +8,18 @@ APP_NAME=dnsupdater
 
 PACKAGE_NAME=github.com/boris1993/$(APP_NAME)
 
-all: mips-softfloat
+all: clean get-dep mips-softfloat
 
 help:
 	@echo Usage: make \<TARGET\>
 	@echo TARGET could be windows-amd64, darwin-amd64, linux-amd64, mips-softfloat
 	@echo Default target is mips-softfloat
+
+clean:
+	rm -rf $(GOPATH)/bin/$(APP_NAME)/
+
+get-dep:
+	go get -v
 
 windows-amd64:
 	GOARCH=amd64 GOOS=windows $(GOBUILD) -o $(GOPATH)/bin/$(APP_NAME)/$(APP_NAME) -i -v $(PACKAGE_NAME)
