@@ -9,15 +9,15 @@ type CfDnsRecord struct {
 }
 
 type CfDnsRecordResult struct {
-	Id         string        `json:"id"`
+	ID         string        `json:"id"`
 	RecordType string        `json:"type"`
 	Name       string        `json:"name"`
 	Content    string        `json:"content"`
 	Proxiable  string        `json:"proxiable"`
 	Proxied    string        `json:"proxied"`
-	Ttl        int           `json:"ttl"`
+	TTL        int           `json:"ttl"`
 	Locked     bool          `json:"locked"`
-	ZoneId     string        `json:"zone_id"`
+	ZoneID     string        `json:"zone_id"`
 	ZoneName   string        `json:"zone_name"`
 	CreatedOn  string        `json:"created_on"`
 	ModifiedOn string        `json:"modified_on"`
