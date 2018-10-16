@@ -12,6 +12,7 @@ notifications:
 branches:
   only:
     - master
+    - /^v.*$/
 before_deploy:
   - git config --local user.name "Boris Zhao"
   - git config --local user.email "boris1993@126.com"
@@ -27,4 +28,5 @@ deploy:
     - "${GOPATH}/bin/dnsupdater-linux-amd64.tar.gz"
     - "${GOPATH}/bin/dnsupdater-linux-mips-softfloat.tar.gz"
   on:
+    repo: boris1993/dnsupdater
     tags: true
