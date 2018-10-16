@@ -23,16 +23,16 @@ get-dep:
 
 windows-amd64:
 	GOARCH=amd64 GOOS=windows $(GOBUILD) -o $(GOPATH)/bin/$(APP_NAME)-windows-amd64/$(APP_NAME) -i -v $(PACKAGE_NAME)
-	cp config.yaml.template $(GOPATH)/bin/$(APP_NAME)/
+	cp config.yaml.template $(GOPATH)/bin/$(APP_NAME)-windows-amd64/
 
 darwin-amd64:
 	GOARCH=amd64 GOOS=darwin $(GOBUILD) -o $(GOPATH)/bin/$(APP_NAME)-darwin-amd64/$(APP_NAME) -i -v $(PACKAGE_NAME)
-	cp config.yaml.template $(GOPATH)/bin/$(APP_NAME)/
+	cp config.yaml.template $(GOPATH)/bin/$(APP_NAME)-darwin-amd64/
 
 linux-amd64:
 	GOARCH=amd64 GOOS=linux $(GOBUILD) -o $(GOPATH)/bin/$(APP_NAME)-linux-amd64/$(APP_NAME) -i -v $(PACKAGE_NAME)
-	cp config.yaml.template $(GOPATH)/bin/$(APP_NAME)/
+	cp config.yaml.template $(GOPATH)/bin/$(APP_NAME)-linux-amd64/
 
 mips-softfloat:
 	GOARCH=mips GOOS=linux GOMIPS=softfloat $(GOBUILD) -o $(GOPATH)/bin/$(APP_NAME)-linux-mips-softfloat/$(APP_NAME) -i -v $(PACKAGE_NAME)
-	cp config.yaml.template $(GOPATH)/bin/$(APP_NAME)/
+	cp config.yaml.template $(GOPATH)/bin/$(APP_NAME)-linux-mips-softfloat/
