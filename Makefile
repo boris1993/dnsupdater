@@ -20,7 +20,7 @@ get-dep:
 	go get
 
 windows-amd64: get-dep
-	GOARCH=amd64 GOOS=windows $(GOBUILD) -o $(GOPATH)/bin/$(APP_NAME)-windows-amd64/$(APP_NAME) -i -v $(PACKAGE_NAME)
+	GOARCH=amd64 GOOS=windows $(GOBUILD) -o $(GOPATH)/bin/$(APP_NAME)-windows-amd64/$(APP_NAME).exe -i -v $(PACKAGE_NAME)
 	cp config.yaml.template $(GOPATH)/bin/$(APP_NAME)-windows-amd64/
 
 darwin-amd64: get-dep
