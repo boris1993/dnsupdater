@@ -1,10 +1,10 @@
 language: go
 script:
   - make
-  - zip -r dnsupdater-windows-amd64.zip $(GOPATH)/bin/dnsupdater-windows-amd64
-  - tar cvzf dnsupdater-darwin-amd64.tar.gz $(GOPATH)/bin/dnsupdater-darwin-amd64
-  - tar cvzf dnsupdater-linux-amd64.tar.gz $(GOPATH)/bin/dnsupdater-linux-amd64
-  - tar cvzf dnsupdater-linux-mips-softfloat.tar.gz $(GOPATH)/bin/dnsupdater-linux-mips-softfloat
+  - zip -r dnsupdater-windows-amd64.zip ${GOPATH}/bin/dnsupdater-windows-amd64
+  - tar cvzf dnsupdater-darwin-amd64.tar.gz ${GOPATH}/bin/dnsupdater-darwin-amd64
+  - tar cvzf dnsupdater-linux-amd64.tar.gz ${GOPATH}/bin/dnsupdater-linux-amd64
+  - tar cvzf dnsupdater-linux-mips-softfloat.tar.gz ${GOPATH}/bin/dnsupdater-linux-mips-softfloat
 notifications:
   email: false
 before_deploy:
