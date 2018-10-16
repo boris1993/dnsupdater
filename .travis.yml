@@ -27,5 +27,4 @@ deploy:
     - "${GOPATH}/bin/dnsupdater-linux-amd64.tar.gz"
     - "${GOPATH}/bin/dnsupdater-linux-mips-softfloat.tar.gz"
   on:
-    repo: boris1993/dnsupdater
     tags: true
