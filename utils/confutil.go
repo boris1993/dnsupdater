@@ -1,3 +1,4 @@
+// Package utils provides utilities about IP addresses, DNS records, and config files.
 package utils
 
 import (
@@ -6,6 +7,9 @@ import (
 	"io/ioutil"
 )
 
+// ReadConfig reads the config.yaml and saves the properties in a variable.
+//
+// path is the absolute or relative path to the config file.
 func ReadConfig(path string) (model.Config, error) {
 	var conf model.Config
 
