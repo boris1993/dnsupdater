@@ -1,3 +1,4 @@
+// Package utils provides utilities about IP addresses, DNS records, and config files.
 package utils
 
 import (
@@ -12,6 +13,11 @@ import (
 	"github.com/boris1993/dnsupdater/model"
 )
 
+// GetDnsRecordIpAddress gets the IP address in the specified DNS record,
+// which is identified by the combination of the record type(hard coded as A type for now) and the domain name.
+//
+// It returns the ID of this DNS record, the IP address of this record,
+// or the error message if any error occurs.
 func GetDnsRecordIpAddress(conf model.Config) (recordId string, address string, err error) {
 	client := &http.Client{}
 
@@ -63,6 +69,11 @@ func GetDnsRecordIpAddress(conf model.Config) (recordId string, address string, 
 	return id, ipAddrInDns, nil
 }
 
+// UpdateDnsRecord updates the specified DNS record identified by the record ID.
+//
+// id is the record ID, address is the IP address to be written.
+//
+// It returns the status of the update process, or the error if any error occurs.
 func UpdateDnsRecord(id string, address string, conf model.Config) (status bool, err error) {
 	client := &http.Client{}
 
