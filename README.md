@@ -1,6 +1,7 @@
 # dnsupdater
-
-[![Build Status](https://travis-ci.org/boris1993/dnsupdater.svg?branch=master)](https://travis-ci.org/boris1993/dnsupdater)
+|master| dev |
+|:----:|:---:|
+|[![Build Status](https://travis-ci.org/boris1993/dnsupdater.svg?branch=master)](https://travis-ci.org/boris1993/dnsupdater)|[![Build Status](https://travis-ci.org/boris1993/dnsupdater.svg?branch=dev)](https://travis-ci.org/boris1993/dnsupdater)|
 
 Obtain your current external IP address and update to the specified DNS record on CloudFlare 
 
