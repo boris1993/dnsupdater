@@ -12,6 +12,7 @@ notifications:
 branches:
   only:
     - master
+    - dev
     - /^v.*$/
 before_deploy:
   - git config --local user.name "Boris Zhao"
