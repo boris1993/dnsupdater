@@ -1,12 +1,6 @@
 language: go
 script:
   - make
-  - pushd ${GOPATH}/bin
-  - zip -r dnsupdater-windows-amd64.zip dnsupdater-windows-amd64
-  - tar cvzf dnsupdater-darwin-amd64.tar.gz dnsupdater-darwin-amd64
-  - tar cvzf dnsupdater-linux-amd64.tar.gz dnsupdater-linux-amd64
-  - tar cvzf dnsupdater-linux-mips-softfloat.tar.gz dnsupdater-linux-mips-softfloat
-  - popd
 notifications:
   email: false
 branches:
@@ -15,6 +9,12 @@ branches:
     - dev
     - /^v.*$/
 before_deploy:
+  - pushd ${GOPATH}/bin
+  - zip -r dnsupdater-windows-amd64.zip dnsupdater-windows-amd64
+  - tar cvzf dnsupdater-darwin-amd64.tar.gz dnsupdater-darwin-amd64
+  - tar cvzf dnsupdater-linux-amd64.tar.gz dnsupdater-linux-amd64
+  - tar cvzf dnsupdater-linux-mips-softfloat.tar.gz dnsupdater-linux-mips-softfloat
+  - popd
   - git config --local user.name "Boris Zhao"
   - git config --local user.email "boris1993@126.com"
   - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
