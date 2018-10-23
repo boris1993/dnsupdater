@@ -16,24 +16,30 @@ var ConfigPath string
 func main() {
 	log.Printf("Loading configuraton from %s.\n", ConfigPath)
 
+	// Try to parse the config file first.
 	conf, err := utils.ReadConfig(ConfigPath)
 
+	// Print the error message and exit when failed to parse the config file.
 	if err != nil {
 		log.Fatalln(err)
 	}
 
+	// Fetch the current external IP address.
 	ipAddress := getIPAddr(conf)
 
+	// Then fetch the IP address of the specified DNS record.
 	id, recordAddress, err := utils.GetDnsRecordIpAddress(conf)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	// Do nothing when the IP address didn't change.
 	if ipAddress == recordAddress {
 		log.Println("IP address not changed. Will not update the DNS record. ")
 		os.Exit(0)
 	} else {
+		// Update the IP address when changed.
 		status, err := utils.UpdateDnsRecord(id, ipAddress, conf)
 
 		if err != nil {
@@ -74,6 +80,7 @@ func getIPAddr(conf model.Config) string {
 		log.Fatal(err)
 	}
 
+	// Body only contains the IP address
 	ipAddress := string(body)
 
 	log.Printf("Current IP address is: %s.\n", ipAddress)
