@@ -17,7 +17,6 @@ before_deploy:
 - popd
 - git config --local user.name "Boris Zhao"
 - git config --local user.email "boris1993@126.com"
-- git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
 deploy:
 - provider: releases
   api_key:
