@@ -3,11 +3,11 @@ script:
 - make
 notifications:
   email: false
-#branches:
-#  only:
-#  - master
-#  - dev
-#  - ^v\d+\.\d+(\.\d+)?(-\S*)?$
+branches:
+  only:
+  - master
+  - dev
+  - ^v\d+\.\d+(\.\d+)?(-\S*)?$
 before_deploy:
 - pushd ${GOPATH}/bin
 - zip -r dnsupdater-windows-amd64.zip dnsupdater-windows-amd64
