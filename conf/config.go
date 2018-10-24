@@ -35,7 +35,7 @@ type config struct {
 
 func Get() *config {
 	once.Do(func() {
-		InitConfig()
+		initConfig()
 	})
 	return conf
 }
@@ -43,7 +43,7 @@ func Get() *config {
 // ReadConfig reads the config.yaml and saves the properties in a variable.
 //
 // path is the absolute or relative path to the config file.
-func InitConfig() error {
+func initConfig() error {
 	log.Printf("Loading configuraton from %s.\n", Path)
 
 	bytes, err := ioutil.ReadFile(Path)
