@@ -1,33 +1,49 @@
 language: go
 script:
-  - make
+- make
 notifications:
   email: false
 branches:
   only:
-    - master
-    - dev
-    - /^v.*$/
+  - master
+  - dev
+  - (^v.*$)|(^v.*-dev$)
 before_deploy:
-  - pushd ${GOPATH}/bin
-  - zip -r dnsupdater-windows-amd64.zip dnsupdater-windows-amd64
-  - tar cvzf dnsupdater-darwin-amd64.tar.gz dnsupdater-darwin-amd64
-  - tar cvzf dnsupdater-linux-amd64.tar.gz dnsupdater-linux-amd64
-  - tar cvzf dnsupdater-linux-mips-softfloat.tar.gz dnsupdater-linux-mips-softfloat
-  - popd
-  - git config --local user.name "Boris Zhao"
-  - git config --local user.email "boris1993@126.com"
-  - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
+- pushd ${GOPATH}/bin
+- zip -r dnsupdater-windows-amd64.zip dnsupdater-windows-amd64
+- tar cvzf dnsupdater-darwin-amd64.tar.gz dnsupdater-darwin-amd64
+- tar cvzf dnsupdater-linux-amd64.tar.gz dnsupdater-linux-amd64
+- tar cvzf dnsupdater-linux-mips-softfloat.tar.gz dnsupdater-linux-mips-softfloat
+- popd
+- git config --local user.name "Boris Zhao"
+- git config --local user.email "boris1993@126.com"
+- git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
 deploy:
-  provider: releases
+- provider: releases
   api_key:
     secure: jS9XfKFAvRyjUGFiIg6GQ9KuhvWiBbuNzeVkUshPc1i555B/6nUuSnSIw9iGR2wF9ltetA47JausPG7fTrudB1c0dPpLFcM98vHnEa+L8IsdlcIIfONPLJ+bkVqDmHTyLxeAOu6yXB1FXmDMqd+/l0ND5Chix93tJ/DzPxCgm6sUocRXdBEhbKT6FwzSK2CgxkG71o6/HLiXjJ8+l3HVj7MhVuNnzSTU/NGaYvWQzdsb84EjtGmKGD3vr8tMQYjaVRwZyYUkdR+qSUgMOZQPs0ygvI4K2nvZGX4qpgVNbvaPwy6e3QZtyVOHzVqW0aGy7G1KETbcwYuEtuNwviH4cwqOcMYJiALLk3KaulBkjBbfHT5/ajSK/m9hrZ29Bwsdyk8p6zMF+hZqUGeoOV+5+bnr/McJV4jwimg62tXkDH752eJFP0vWAf0DS7vGJQ9sOduyWUyvyfGNss2MI3QcBYy0Mn3iCwI/rFSsoXjoIjVp8CNhtFgw6sY/Ctvq7h4/GiwkxTtuYioHDZeBFWe+8gRSf3W0t6VuzKJgmUN+u4SMes/CTuZm/vkWtG6ou8MhkSSSbMmg73MdumXjrIBhM7Bauk6a3PVpUgk8u8M+e0kOwnCtgAN6gsdvHr4qQVOqcL5KD/NeFAo07IaZsW6odHkZ8pZlEtoYMAkxXkZLNRQ=
   skip_cleanup: true
   file:
-    - "${GOPATH}/bin/dnsupdater-windows-amd64.zip"
-    - "${GOPATH}/bin/dnsupdater-darwin-amd64.tar.gz"
-    - "${GOPATH}/bin/dnsupdater-linux-amd64.tar.gz"
-    - "${GOPATH}/bin/dnsupdater-linux-mips-softfloat.tar.gz"
+  - "${GOPATH}/bin/dnsupdater-windows-amd64.zip"
+  - "${GOPATH}/bin/dnsupdater-darwin-amd64.tar.gz"
+  - "${GOPATH}/bin/dnsupdater-linux-amd64.tar.gz"
+  - "${GOPATH}/bin/dnsupdater-linux-mips-softfloat.tar.gz"
   on:
     repo: boris1993/dnsupdater
     tags: true
+    on: $TRAVIS_TAG =~ ^v.*$
+
+- provider: releases
+  api_key:
+    secure: jS9XfKFAvRyjUGFiIg6GQ9KuhvWiBbuNzeVkUshPc1i555B/6nUuSnSIw9iGR2wF9ltetA47JausPG7fTrudB1c0dPpLFcM98vHnEa+L8IsdlcIIfONPLJ+bkVqDmHTyLxeAOu6yXB1FXmDMqd+/l0ND5Chix93tJ/DzPxCgm6sUocRXdBEhbKT6FwzSK2CgxkG71o6/HLiXjJ8+l3HVj7MhVuNnzSTU/NGaYvWQzdsb84EjtGmKGD3vr8tMQYjaVRwZyYUkdR+qSUgMOZQPs0ygvI4K2nvZGX4qpgVNbvaPwy6e3QZtyVOHzVqW0aGy7G1KETbcwYuEtuNwviH4cwqOcMYJiALLk3KaulBkjBbfHT5/ajSK/m9hrZ29Bwsdyk8p6zMF+hZqUGeoOV+5+bnr/McJV4jwimg62tXkDH752eJFP0vWAf0DS7vGJQ9sOduyWUyvyfGNss2MI3QcBYy0Mn3iCwI/rFSsoXjoIjVp8CNhtFgw6sY/Ctvq7h4/GiwkxTtuYioHDZeBFWe+8gRSf3W0t6VuzKJgmUN+u4SMes/CTuZm/vkWtG6ou8MhkSSSbMmg73MdumXjrIBhM7Bauk6a3PVpUgk8u8M+e0kOwnCtgAN6gsdvHr4qQVOqcL5KD/NeFAo07IaZsW6odHkZ8pZlEtoYMAkxXkZLNRQ=
+  skip_cleanup: true
+  prerelease: true
+  file:
+  - "${GOPATH}/bin/dnsupdater-windows-amd64.zip"
+  - "${GOPATH}/bin/dnsupdater-darwin-amd64.tar.gz"
+  - "${GOPATH}/bin/dnsupdater-linux-amd64.tar.gz"
+  - "${GOPATH}/bin/dnsupdater-linux-mips-softfloat.tar.gz"
+  on:
+    repo: boris1993/dnsupdater
+    tags: true
+    on: $TRAVIS_TAG =~ ^v.*-dev$
