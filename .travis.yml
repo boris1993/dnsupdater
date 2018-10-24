@@ -44,5 +44,6 @@ deploy:
   - "${GOPATH}/bin/dnsupdater-linux-mips-softfloat.tar.gz"
   on:
     repo: boris1993/dnsupdater
+    all_branches: true
     tags: true
     on: $TRAVIS_TAG =~ ^v\d+\.\d+(\.\d+)?(-\S*)?$
