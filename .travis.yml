@@ -7,7 +7,8 @@ branches:
   only:
   - master
   - dev
-  - (^v.*$)|(^v.*-dev$)
+  - ^v.*$
+  - ^v.*-dev$
 before_deploy:
 - pushd ${GOPATH}/bin
 - zip -r dnsupdater-windows-amd64.zip dnsupdater-windows-amd64
