@@ -7,7 +7,7 @@ branches:
   only:
   - master
   - dev
-  - ^v.*$
+  - ^v\d+\.\d+(\.\d+)?(-\S*)?$
 before_deploy:
 - pushd ${GOPATH}/bin
 - zip -r dnsupdater-windows-amd64.zip dnsupdater-windows-amd64
@@ -31,7 +31,7 @@ deploy:
   on:
     repo: boris1993/dnsupdater
     tags: true
-    on: $TRAVIS_TAG =~ ^v.*$
+    on: $TRAVIS_TAG =~ ^v\d+\.\d+(\.\d+)?$
 
 - provider: releases
   api_key:
@@ -46,4 +46,4 @@ deploy:
   on:
     repo: boris1993/dnsupdater
     tags: true
-    on: $TRAVIS_TAG =~ ^v.*-dev$
+    on: $TRAVIS_TAG =~ ^v\d+\.\d+(\.\d+)?(-\S*)?$
