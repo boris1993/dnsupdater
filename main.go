@@ -2,33 +2,22 @@ package main
 
 import (
 	"flag"
-	"github.com/boris1993/dnsupdater/model"
+	"github.com/boris1993/dnsupdater/conf"
+	"github.com/boris1993/dnsupdater/utils"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
-
-	"github.com/boris1993/dnsupdater/utils"
 )
 
-var ConfigPath string
-
 func main() {
-	log.Printf("Loading configuraton from %s.\n", ConfigPath)
-
-	// Try to parse the config file first.
-	conf, err := utils.ReadConfig(ConfigPath)
-
-	// Print the error message and exit when failed to parse the config file.
-	if err != nil {
-		log.Fatalln(err)
-	}
+	var config = conf.Get()
 
 	// Fetch the current external IP address.
-	ipAddress := getIPAddr(conf)
+	ipAddress := getIPAddr()
 
 	// Then fetch the IP address of the specified DNS record.
-	id, recordAddress, err := utils.GetDnsRecordIpAddress(conf)
+	id, recordAddress, err := utils.GetDnsRecordIpAddress()
 
 	if err != nil {
 		log.Fatal(err)
@@ -40,17 +29,17 @@ func main() {
 		os.Exit(0)
 	} else {
 		// Update the IP address when changed.
-		status, err := utils.UpdateDnsRecord(id, ipAddress, conf)
+		status, err := utils.UpdateDnsRecord(id, ipAddress)
 
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		if !status {
-			log.Printf("Failed to update the DNS record %s.\n", conf.CloudFlare.DomainName)
+			log.Printf("Failed to update the DNS record %s.\n", config.CloudFlare.DomainName)
 			os.Exit(1)
 		} else {
-			log.Printf("Successfully updated the DNS record %s.\n", conf.CloudFlare.DomainName)
+			log.Printf("Successfully updated the DNS record %s.\n", config.CloudFlare.DomainName)
 		}
 
 		os.Exit(0)
@@ -58,15 +47,17 @@ func main() {
 }
 
 func init() {
-	flag.StringVar(&ConfigPath, "config", "./config.yaml", "Path to the config file.")
-	flag.StringVar(&ConfigPath, "c", "./config.yaml", "Path to the config file.")
+	flag.StringVar(&conf.Path, "config", "./config.yaml", "Path to the config file.")
+	flag.StringVar(&conf.Path, "c", "./config.yaml", "Path to the config file.")
 	flag.Parse()
 }
 
-func getIPAddr(conf model.Config) string {
+func getIPAddr() string {
+	var config = conf.Get()
+
 	log.Println("Checking current IP address...")
 
-	resp, err := http.Get(conf.System.IPAddrAPI)
+	resp, err := http.Get(config.System.IPAddrAPI)
 
 	if err != nil {
 		log.Fatal(err)
