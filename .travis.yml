@@ -46,4 +46,4 @@ deploy:
     repo: boris1993/dnsupdater
     all_branches: true
     tags: true
-    on: $TRAVIS_TAG =~ ^v\d+\.\d+(\.\d+)?(-\S*)?$
+    on: $TRAVIS_TAG =~ ^v\d+\.\d+(\.\d+)?-\S*?$
