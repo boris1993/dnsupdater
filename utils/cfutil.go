@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/boris1993/dnsupdater/conf"
 	"github.com/boris1993/dnsupdater/constants"
 	"io/ioutil"
 	"log"
@@ -18,18 +19,20 @@ import (
 //
 // It returns the ID of this DNS record, the IP address of this record,
 // or the error message if any error occurs.
-func GetDnsRecordIpAddress(conf model.Config) (recordId string, address string, err error) {
+func GetDnsRecordIpAddress() (recordId string, address string, err error) {
+	var config = conf.Get()
+
 	client := &http.Client{}
 
 	req, err := http.NewRequest(http.MethodGet,
-		conf.CloudFlare.APIEndpoint+"/zones/"+conf.CloudFlare.ZoneID+"/dns_records?type=A&name="+conf.CloudFlare.DomainName,
+		config.CloudFlare.APIEndpoint+"/zones/"+config.CloudFlare.ZoneID+"/dns_records?type=A&name="+config.CloudFlare.DomainName,
 		nil)
 
-	req.Header.Add("X-Auth-Email", conf.CloudFlare.AuthEmail)
-	req.Header.Add("X-Auth-Key", conf.CloudFlare.APIKey)
+	req.Header.Add("X-Auth-Email", config.CloudFlare.AuthEmail)
+	req.Header.Add("X-Auth-Key", config.CloudFlare.APIKey)
 	req.Header.Add("Content-Type", "application/json")
 
-	log.Printf("Fetching IP address of domain %s.\n", conf.CloudFlare.DomainName)
+	log.Printf("Fetching IP address of domain %s.\n", config.CloudFlare.DomainName)
 
 	resp, err := client.Do(req)
 
@@ -64,7 +67,7 @@ func GetDnsRecordIpAddress(conf model.Config) (recordId string, address string, 
 	id := dnsRecord.Result[0].ID
 	ipAddrInDns := dnsRecord.Result[0].Content
 
-	log.Printf("IP address of %s is %s.\n", conf.CloudFlare.DomainName, ipAddrInDns)
+	log.Printf("IP address of %s is %s.\n", config.CloudFlare.DomainName, ipAddrInDns)
 
 	return id, ipAddrInDns, nil
 }
@@ -74,26 +77,28 @@ func GetDnsRecordIpAddress(conf model.Config) (recordId string, address string, 
 // id is the record ID, address is the IP address to be written.
 //
 // It returns the status of the update process, or the error if any error occurs.
-func UpdateDnsRecord(id string, address string, conf model.Config) (status bool, err error) {
+func UpdateDnsRecord(id string, address string) (status bool, err error) {
+	var config = conf.Get()
+
 	client := &http.Client{}
 
 	updateRecordData := model.UpdateRecordData{}
 	updateRecordData.RecordType = "A"
-	updateRecordData.Name = conf.CloudFlare.DomainName
+	updateRecordData.Name = config.CloudFlare.DomainName
 	updateRecordData.Content = address
 
 	updateRecordDataByte, _ := json.Marshal(updateRecordData)
 	requestBodyReader := bytes.NewReader(updateRecordDataByte)
 
 	req, err := http.NewRequest(http.MethodPut,
-		conf.CloudFlare.APIEndpoint+"/zones/"+conf.CloudFlare.ZoneID+"/dns_records/"+id,
+		config.CloudFlare.APIEndpoint+"/zones/"+config.CloudFlare.ZoneID+"/dns_records/"+id,
 		requestBodyReader)
 
-	req.Header.Add("X-Auth-Email", conf.CloudFlare.AuthEmail)
-	req.Header.Add("X-Auth-Key", conf.CloudFlare.APIKey)
+	req.Header.Add("X-Auth-Email", config.CloudFlare.AuthEmail)
+	req.Header.Add("X-Auth-Key", config.CloudFlare.APIKey)
 	req.Header.Add("Content-Type", "application/json")
 
-	log.Printf("Updating IP address of domain %s to %s.\n", conf.CloudFlare.DomainName, address)
+	log.Printf("Updating IP address of domain %s to %s.\n", config.CloudFlare.DomainName, address)
 
 	resp, err := client.Do(req)
 
