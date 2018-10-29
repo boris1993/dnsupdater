@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 )
 
 func main() {
@@ -47,8 +48,8 @@ func main() {
 }
 
 func init() {
-	flag.StringVar(&conf.Path, "config", "./config.yaml", "Path to the config file.")
-	flag.StringVar(&conf.Path, "c", "./config.yaml", "Path to the config file.")
+	flag.StringVar(&conf.Path, "config", filepath.Join(".", "config.yaml"), "Path to the config file.")
+	flag.StringVar(&conf.Path, "c", filepath.Join(".", "config.yaml"), "Path to the config file.")
 	flag.Parse()
 }
 
