@@ -9,17 +9,17 @@ Primarily built for MIPS 74kc since my router has a MIPS 74kc CPU
 
 ## How-to
 
-### Download pre-built binaries
+### Using pre-built binaries
 
-+ Go to **Releases** and download the binary for your target
++ Go to **Releases** and download the binary for your target.
 
-+ Extract the archive
++ Extract the archive.
 
-+ Rename `config.yaml.template` to `config.yaml`
++ Rename `config.yaml.template` to `config.yaml`.
 
-+ Replace your configuration in the `config.yaml`
++ Finish your configuration in the `config.yaml`.
 
-+ Upload `dnsupdater` and `config.yaml` to where you want this app to run
++ Upload `dnsupdater` and `config.yaml` to the device you want this app to run.
 
 + Set up a cron job like
 
@@ -29,12 +29,12 @@ Primarily built for MIPS 74kc since my router has a MIPS 74kc CPU
 
 ### Build from source
 
-+ Install Go
++ Install Go >= 11.1
 
 + Get this repo
 
 ```bash
-go get github.com/boris1993/dnsupdater
+git checkout https://github.com/boris1993/dnsupdater.git
 ```
 
 + Build for MIPS 74kc
@@ -51,17 +51,19 @@ For *nix users:
 make mips-softfloat
 ```
 
-Then you will find the executable file under `${GOPATH}/bin/dnsupdater` directory. 
+Then you will find the executable file under the `bin/dnsupdater-dnsupdater-linux-mips-softfloat` directory. 
+
++ Finish the configuration
+
+Rename `config.yaml.template` to `config.yaml` and finish your configuration. 
 
 + Upload to your router
 
-Just upload the executable to your router via FTP or SFTP.
+Upload `dnsupdater` and `config.yaml` to your router.
 
-And don't forget to give it execute permission.
+And don't forget to give it executable permission.
 
 + Create a cron job
-
-Sure you don't want this to be a disposable product right?
 
 ```crontab
 0 0,12 * * * /root/dnsupdater/dnsupdater > /var/log/update-dns.log 2>&1 &
