@@ -34,7 +34,7 @@ Primarily built for MIPS 74kc since my router has a MIPS 74kc CPU
 + Get this repo
 
 ```bash
-git checkout https://github.com/boris1993/dnsupdater.git
+git clone https://github.com/boris1993/dnsupdater.git
 ```
 
 + Build for MIPS 74kc
