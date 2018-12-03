@@ -21,7 +21,7 @@ func main() {
 	id, recordAddress, err := utils.GetDnsRecordIpAddress()
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
 
 	// Do nothing when the IP address didn't change.
@@ -33,7 +33,7 @@ func main() {
 		status, err := utils.UpdateDnsRecord(id, ipAddress)
 
 		if err != nil {
-			log.Fatal(err)
+			log.Fatalln(err)
 		}
 
 		if !status {
@@ -48,8 +48,14 @@ func main() {
 }
 
 func init() {
-	flag.StringVar(&conf.Path, "config", filepath.Join(".", "config.yaml"), "Path to the config file.")
-	flag.StringVar(&conf.Path, "c", filepath.Join(".", "config.yaml"), "Path to the config file.")
+	absPath, err := filepath.Abs(filepath.Dir(os.Args[0]))
+
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	flag.StringVar(&conf.Path, "config", filepath.Join(absPath, "config.yaml"), "Path to the config file.")
+	flag.StringVar(&conf.Path, "c", filepath.Join(absPath, "config.yaml"), "Path to the config file.")
 	flag.Parse()
 }
 
@@ -61,15 +67,22 @@ func getIPAddr() string {
 	resp, err := http.Get(config.System.IPAddrAPI)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
 
-	defer resp.Body.Close()
+	// Handle errors when closing the HTTP connection
+	defer func() {
+		err := resp.Body.Close()
+
+		if err != nil {
+			log.Println("Error closing the HTTP connection. ", err)
+		}
+	}()
 
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
 
 	// Body only contains the IP address

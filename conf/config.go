@@ -35,7 +35,11 @@ type config struct {
 
 func Get() *config {
 	once.Do(func() {
-		initConfig()
+		err := initConfig()
+
+		if err != nil {
+			log.Fatalln(err)
+		}
 	})
 	return conf
 }
