@@ -20,21 +20,21 @@ get-dep:
 	go get
 
 windows-amd64: get-dep
-	GOARCH=amd64 GOOS=windows $(GOBUILD) -o $(GOPATH)/bin/$(APP_NAME)-windows-amd64/$(APP_NAME).exe -i -v $(PACKAGE_NAME)
-	cp config.yaml.template $(GOPATH)/bin/$(APP_NAME)-windows-amd64/
+	GOARCH=amd64 GOOS=windows $(GOBUILD) -o bin/$(APP_NAME)-windows-amd64/$(APP_NAME).exe -i $(PACKAGE_NAME)
+	cp config.yaml.template bin/$(APP_NAME)-windows-amd64/
 
 darwin-amd64: get-dep
-	GOARCH=amd64 GOOS=darwin $(GOBUILD) -o $(GOPATH)/bin/$(APP_NAME)-darwin-amd64/$(APP_NAME) -i -v $(PACKAGE_NAME)
-	cp config.yaml.template $(GOPATH)/bin/$(APP_NAME)-darwin-amd64/
+	GOARCH=amd64 GOOS=darwin $(GOBUILD) -o bin/$(APP_NAME)-darwin-amd64/$(APP_NAME) -i $(PACKAGE_NAME)
+	cp config.yaml.template bin/$(APP_NAME)-darwin-amd64/
 
 linux-amd64: get-dep
-	GOARCH=amd64 GOOS=linux $(GOBUILD) -o $(GOPATH)/bin/$(APP_NAME)-linux-amd64/$(APP_NAME) -i -v $(PACKAGE_NAME)
-	cp config.yaml.template $(GOPATH)/bin/$(APP_NAME)-linux-amd64/
+	GOARCH=amd64 GOOS=linux $(GOBUILD) -o bin/$(APP_NAME)-linux-amd64/$(APP_NAME) -i $(PACKAGE_NAME)
+	cp config.yaml.template bin/$(APP_NAME)-linux-amd64/
 
 mips-softfloat: get-dep
-	GOARCH=mips GOOS=linux GOMIPS=softfloat $(GOBUILD) -o $(GOPATH)/bin/$(APP_NAME)-linux-mips-softfloat/$(APP_NAME) -i -v $(PACKAGE_NAME)
-	cp config.yaml.template $(GOPATH)/bin/$(APP_NAME)-linux-mips-softfloat/
+	GOARCH=mips GOOS=linux GOMIPS=softfloat $(GOBUILD) -o bin/$(APP_NAME)-linux-mips-softfloat/$(APP_NAME) -i $(PACKAGE_NAME)
+	cp config.yaml.template bin/$(APP_NAME)-linux-mips-softfloat/
 
 .PHONY: clean
 clean:
-	rm -rf $(GOPATH)/bin/$(APP_NAME)/$(APP_NAME)
+	rm -r bin
