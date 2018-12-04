@@ -1,7 +1,7 @@
 GOCMD=go
 GOBUILD=$(GOCMD) build
 
-BUILD_ARGS=-i
+BUILD_ARGS=-i -mod=vendor
 
 APP_NAME=dnsupdater
 
