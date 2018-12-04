@@ -58,7 +58,6 @@ IF NOT EXIST bin\%APP_NAME%-%GOOS%-%GOARCH% (
     mkdir bin\%APP_NAME%-%GOOS%-%GOARCH%
 )
 
-ECHO Building...
 go build -i -mod=vendor -o bin\%APP_NAME%-%GOOS%-%GOARCH%\%APP_NAME%.exe
 
 IF errorlevel 1 GOTO error
@@ -71,7 +70,6 @@ IF NOT EXIST bin\%APP_NAME%-%GOOS%-%GOARCH% (
     mkdir bin\%APP_NAME%-%GOOS%-%GOARCH%
 )
 
-ECHO Building...
 go build -i -mod=vendor -o bin\%APP_NAME%-%GOOS%-%GOARCH%\%APP_NAME%
 
 IF errorlevel 1 GOTO error
