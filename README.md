@@ -11,15 +11,15 @@ Primarily built for MIPS 74kc since my router has a MIPS 74kc CPU
 
 ### Using pre-built binaries
 
-+ Go to **Releases** and download the binary for your target.
++ Download the [latest release](https://github.com/boris1993/dnsupdater/releases/latest) for your target
 
-+ Extract the archive.
++ Extract the archive
 
-+ Rename `config.yaml.template` to `config.yaml`.
++ Rename `config.yaml.template` to `config.yaml`
 
-+ Finish your configuration in the `config.yaml`.
++ Finish your configuration in the `config.yaml`
 
-+ Upload `dnsupdater` and `config.yaml` to the device you want this app to run.
++ Upload `dnsupdater` and `config.yaml` to the device you want this app to run
 
 + Set up a cron job like
 
