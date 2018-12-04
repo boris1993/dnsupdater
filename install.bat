@@ -60,6 +60,9 @@ IF NOT EXIST bin\%APP_NAME%-%GOOS%-%GOARCH% (
 
 go build -i -mod=vendor -o bin\%APP_NAME%-%GOOS%-%GOARCH%\%APP_NAME%.exe
 
+ECHO Copying template config file to target directory...
+copy config.yaml.template bin\%APP_NAME%-%GOOS%-%GOARCH%
+
 IF errorlevel 1 GOTO error
 GOTO success
 
@@ -71,6 +74,9 @@ IF NOT EXIST bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS% (
 )
 
 go build -i -mod=vendor -o bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS%\%APP_NAME%
+
+ECHO Copying template config file to target directory...
+copy config.yaml.template bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS%
 
 IF errorlevel 1 GOTO error
 GOTO success
@@ -84,11 +90,13 @@ IF NOT EXIST bin\%APP_NAME%-%GOOS%-%GOARCH% (
 
 go build -i -mod=vendor -o bin\%APP_NAME%-%GOOS%-%GOARCH%\%APP_NAME%
 
-IF errorlevel 1 GOTO error
-
-:success
 ECHO Copying template config file to target directory...
 copy config.yaml.template bin\%APP_NAME%-%GOOS%-%GOARCH%
+
+IF errorlevel 1 GOTO error
+GOTO success
+
+:success
 ECHO Build finished
 GOTO exit
 
