@@ -49,7 +49,7 @@ GOTO do-build
 SET GOARCH=mips
 SET GOOS=linux
 SET GOMIPS=softfloat
-GOTO do-build
+GOTO do-build-mips
 
 :do-build-windows
 ECHO Building binary for Windows running under amd64
@@ -59,6 +59,18 @@ IF NOT EXIST bin\%APP_NAME%-%GOOS%-%GOARCH% (
 )
 
 go build -i -mod=vendor -o bin\%APP_NAME%-%GOOS%-%GOARCH%\%APP_NAME%.exe
+
+IF errorlevel 1 GOTO error
+GOTO success
+
+:do-build-mips
+ECHO Building binary for Linux running under %GOARCH%-%GOMIPS%
+
+IF NOT EXIST bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS% (
+    mkdir bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS%
+)
+
+go build -i -mod=vendor -o bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS%\%APP_NAME%
 
 IF errorlevel 1 GOTO error
 GOTO success

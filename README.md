@@ -51,7 +51,7 @@ For *nix users:
 make mips-softfloat
 ```
 
-Then you will find the executable file under the `bin/dnsupdater-dnsupdater-linux-mips-softfloat` directory. 
+Then you will find the executable file under the `bin/dnsupdater-linux-mips-softfloat` directory. 
 
 + Finish the configuration
 
