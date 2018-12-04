@@ -2,6 +2,9 @@
 
 SETLOCAL
 
+SET APP_NAME=dnsupdater
+SET PACKAGE_NAME=github.com/boris1993/%APP_NAME%
+
 IF EXIST install.bat GOTO check-option
 ECHO install.bat must be run from its folder
 GOTO end
@@ -30,7 +33,7 @@ GOTO build-mips-softfloat
 :build-windows-amd64
 SET GOARCH=amd64
 SET GOOS=windows
-GOTO do-build
+GOTO do-build-windows
 
 :build-linux-amd64
 SET GOARCH=amd64
@@ -46,26 +49,52 @@ GOTO do-build
 SET GOARCH=mips
 SET GOOS=linux
 SET GOMIPS=softfloat
-GOTO do-build
+GOTO do-build-mips
+
+:do-build-windows
+ECHO Building binary for Windows running under amd64
+
+IF NOT EXIST bin\%APP_NAME%-%GOOS%-%GOARCH% (
+    mkdir bin\%APP_NAME%-%GOOS%-%GOARCH%
+)
+
+go build -i -mod=vendor -o bin\%APP_NAME%-%GOOS%-%GOARCH%\%APP_NAME%.exe
+
+ECHO Copying template config file to target directory...
+copy config.yaml.template bin\%APP_NAME%-%GOOS%-%GOARCH%
+
+IF errorlevel 1 GOTO error
+GOTO success
+
+:do-build-mips
+ECHO Building binary for Linux running under %GOARCH%-%GOMIPS%
+
+IF NOT EXIST bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS% (
+    mkdir bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS%
+)
+
+go build -i -mod=vendor -o bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS%\%APP_NAME%
+
+ECHO Copying template config file to target directory...
+copy config.yaml.template bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS%
+
+IF errorlevel 1 GOTO error
+GOTO success
 
 :do-build
 ECHO Building binary for %GOOS% running under %GOARCH%
 
-SET APP_NAME=dnsupdater
-SET PACKAGE_NAME=github.com/boris1993/%APP_NAME%
-
-IF NOT EXIST %GOPATH%\bin\%APP_NAME% (
-    mkdir %GOPATH%\bin\%APP_NAME%
+IF NOT EXIST bin\%APP_NAME%-%GOOS%-%GOARCH% (
+    mkdir bin\%APP_NAME%-%GOOS%-%GOARCH%
 )
 
-ECHO Downloading dependencies...
-go get -v
-ECHO Building...
-go build -o %GOPATH%\bin\%APP_NAME%\%APP_NAME%.exe -i -v %PACKAGE_NAME%
+go build -i -mod=vendor -o bin\%APP_NAME%-%GOOS%-%GOARCH%\%APP_NAME%
+
 ECHO Copying template config file to target directory...
-copy config.yaml.template %GOPATH%\bin\%APP_NAME%
+copy config.yaml.template bin\%APP_NAME%-%GOOS%-%GOARCH%
 
 IF errorlevel 1 GOTO error
+GOTO success
 
 :success
 ECHO Build finished
