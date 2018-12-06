@@ -3,8 +3,6 @@ version: 1.1
 language: go
 go:
   - "1.11.x"
-env:
-  - GO111MODULE=on
 install: true
 script:
   - make
