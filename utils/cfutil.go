@@ -7,8 +7,8 @@ import (
 	"errors"
 	"github.com/boris1993/dnsupdater/conf"
 	"github.com/boris1993/dnsupdater/constants"
+	log "github.com/sirupsen/logrus"
 	"io/ioutil"
-	"log"
 	"net/http"
 
 	"github.com/boris1993/dnsupdater/model"
@@ -19,7 +19,7 @@ import (
 //
 // It returns the ID of this DNS record, the IP address of this record,
 // or the error message if any error occurs.
-func GetDnsRecordIpAddress() (recordId string, address string, err error) {
+func GetDnsRecordIpAddress() (recordID string, address string, err error) {
 	var config = conf.Get()
 
 	client := &http.Client{}
@@ -32,7 +32,7 @@ func GetDnsRecordIpAddress() (recordId string, address string, err error) {
 	req.Header.Add("X-Auth-Key", config.CloudFlare.APIKey)
 	req.Header.Add("Content-Type", "application/json")
 
-	log.Printf("Fetching IP address of domain %s.\n", config.CloudFlare.DomainName)
+	log.Println(constants.MsgHeaderFetchingIPOfDomain, config.CloudFlare.DomainName)
 
 	resp, err := client.Do(req)
 
@@ -54,10 +54,16 @@ func GetDnsRecordIpAddress() (recordId string, address string, err error) {
 
 	dnsRecord := model.CfDnsRecord{}
 
-	json.Unmarshal([]byte(string(body)), &dnsRecord)
+	log.Debug("Response: \n" + string(body))
+
+	err = json.Unmarshal([]byte(string(body)), &dnsRecord)
+
+	if err != nil {
+		return "", "", err
+	}
 
 	if !dnsRecord.Success {
-		return
+		return "", "", errors.New(constants.ErrMsgHeaderFetchDomainInfoFailed + config.CloudFlare.DomainName)
 	}
 
 	if len(dnsRecord.Result) == 0 {
@@ -67,7 +73,7 @@ func GetDnsRecordIpAddress() (recordId string, address string, err error) {
 	id := dnsRecord.Result[0].ID
 	ipAddrInDns := dnsRecord.Result[0].Content
 
-	log.Printf("IP address of %s is %s.\n", config.CloudFlare.DomainName, ipAddrInDns)
+	log.Printf(constants.MsgFormatDNSFetchResult, config.CloudFlare.DomainName, ipAddrInDns)
 
 	return id, ipAddrInDns, nil
 }
@@ -94,11 +100,15 @@ func UpdateDnsRecord(id string, address string) (status bool, err error) {
 		config.CloudFlare.APIEndpoint+"/zones/"+config.CloudFlare.ZoneID+"/dns_records/"+id,
 		requestBodyReader)
 
+	if err != nil {
+		return false, err
+	}
+
 	req.Header.Add("X-Auth-Email", config.CloudFlare.AuthEmail)
 	req.Header.Add("X-Auth-Key", config.CloudFlare.APIKey)
 	req.Header.Add("Content-Type", "application/json")
 
-	log.Printf("Updating IP address of domain %s to %s.\n", config.CloudFlare.DomainName, address)
+	log.Printf(constants.MsgFormatUpdatingDNS, config.CloudFlare.DomainName, address)
 
 	resp, err := client.Do(req)
 
@@ -106,7 +116,14 @@ func UpdateDnsRecord(id string, address string) (status bool, err error) {
 		return false, err
 	}
 
-	defer resp.Body.Close()
+	// Handle errors when closing the HTTP connection
+	defer func() {
+		err := resp.Body.Close()
+
+		if err != nil {
+			log.Errorln(constants.ErrCloseHTTPConnectionFail, err)
+		}
+	}()
 
 	body, err := ioutil.ReadAll(resp.Body)
 
@@ -116,9 +133,13 @@ func UpdateDnsRecord(id string, address string) (status bool, err error) {
 
 	dnsRecord := model.UpdateRecordResult{}
 
-	json.Unmarshal(body, &dnsRecord)
+	log.Debug("Response: \n" + string(body))
 
-	updateStatus := dnsRecord.Success
+	err = json.Unmarshal(body, &dnsRecord)
 
-	return updateStatus, nil
+	if err != nil {
+		return false, err
+	}
+
+	return dnsRecord.Success, nil
 }

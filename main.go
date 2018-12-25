@@ -3,12 +3,12 @@ package main
 import (
 	"flag"
 	"github.com/boris1993/dnsupdater/conf"
+	"github.com/boris1993/dnsupdater/constants"
 	"github.com/boris1993/dnsupdater/utils"
+	log "github.com/sirupsen/logrus"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
-	"path/filepath"
 )
 
 func main() {
@@ -26,7 +26,7 @@ func main() {
 
 	// Do nothing when the IP address didn't change.
 	if ipAddress == recordAddress {
-		log.Println("IP address not changed. Will not update the DNS record. ")
+		log.Println(constants.MsgIPAddrNotChanged)
 		os.Exit(0)
 	} else {
 		// Update the IP address when changed.
@@ -37,10 +37,10 @@ func main() {
 		}
 
 		if !status {
-			log.Printf("Failed to update the DNS record %s.\n", config.CloudFlare.DomainName)
+			log.Errorln(constants.ErrMsgHeaderUpdateDNSRecordFailed, config.CloudFlare.DomainName)
 			os.Exit(1)
 		} else {
-			log.Printf("Successfully updated the DNS record %s.\n", config.CloudFlare.DomainName)
+			log.Println(constants.MsgHeaderDNSRecordUpdateSuccessful, config.CloudFlare.DomainName)
 		}
 
 		os.Exit(0)
@@ -48,21 +48,24 @@ func main() {
 }
 
 func init() {
-	absPath, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	flag.StringVar(&conf.Path, "config", "", "Path to the config file.")
+	flag.BoolVar(&conf.Debug, "debug", false, "Enable debug logging.")
 
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	flag.StringVar(&conf.Path, "config", filepath.Join(absPath, "config.yaml"), "Path to the config file.")
-	flag.StringVar(&conf.Path, "c", filepath.Join(absPath, "config.yaml"), "Path to the config file.")
 	flag.Parse()
+
+	log.SetFormatter(&log.TextFormatter{DisableLevelTruncation: true})
+
+	if conf.Debug == true {
+		log.SetLevel(log.DebugLevel)
+	} else {
+		log.SetLevel(log.InfoLevel)
+	}
 }
 
 func getIPAddr() string {
 	var config = conf.Get()
 
-	log.Println("Checking current IP address...")
+	log.Println(constants.MsgCheckingCurrentIPAddr)
 
 	resp, err := http.Get(config.System.IPAddrAPI)
 
@@ -75,7 +78,7 @@ func getIPAddr() string {
 		err := resp.Body.Close()
 
 		if err != nil {
-			log.Println("Error closing the HTTP connection. ", err)
+			log.Errorln(constants.ErrCloseHTTPConnectionFail, err)
 		}
 	}()
 
@@ -88,7 +91,7 @@ func getIPAddr() string {
 	// Body only contains the IP address
 	ipAddress := string(body)
 
-	log.Printf("Current IP address is: %s.\n", ipAddress)
+	log.Println(constants.MsgHeaderCurrentIPAddr, ipAddress)
 
 	return ipAddress
 }
