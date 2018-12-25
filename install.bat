@@ -14,7 +14,7 @@ SET OPTION=%1
 
 IF "%OPTION%" EQU "-h" GOTO help
 IF "%OPTION%" EQU "--help" GOTO help
-IF "%OPTION%" equ "/?" GOTO help
+IF "%OPTION%" EQU "/?" GOTO help
 GOTO :check-arch
 
 :help
@@ -58,7 +58,7 @@ IF NOT EXIST bin\%APP_NAME%-%GOOS%-%GOARCH% (
     mkdir bin\%APP_NAME%-%GOOS%-%GOARCH%
 )
 
-go build -i -mod=vendor -o bin\%APP_NAME%-%GOOS%-%GOARCH%\%APP_NAME%.exe
+go build -i -o bin\%APP_NAME%-%GOOS%-%GOARCH%\%APP_NAME%.exe
 
 ECHO Copying template config file to target directory...
 copy config.yaml.template bin\%APP_NAME%-%GOOS%-%GOARCH%
@@ -73,7 +73,7 @@ IF NOT EXIST bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS% (
     mkdir bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS%
 )
 
-go build -i -mod=vendor -o bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS%\%APP_NAME%
+go build -i -o bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS%\%APP_NAME%
 
 ECHO Copying template config file to target directory...
 copy config.yaml.template bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS%
@@ -88,7 +88,7 @@ IF NOT EXIST bin\%APP_NAME%-%GOOS%-%GOARCH% (
     mkdir bin\%APP_NAME%-%GOOS%-%GOARCH%
 )
 
-go build -i -mod=vendor -o bin\%APP_NAME%-%GOOS%-%GOARCH%\%APP_NAME%
+go build -i -o bin\%APP_NAME%-%GOOS%-%GOARCH%\%APP_NAME%
 
 ECHO Copying template config file to target directory...
 copy config.yaml.template bin\%APP_NAME%-%GOOS%-%GOARCH%
