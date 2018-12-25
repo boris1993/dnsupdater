@@ -2,13 +2,18 @@
 package conf
 
 import (
+	"github.com/boris1993/dnsupdater/constants"
+	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
-	"log"
+	"os"
+	"path/filepath"
 	"sync"
 )
 
 var once sync.Once
+
+var Debug bool
 
 var Path string
 var conf *config
@@ -44,11 +49,19 @@ func Get() *config {
 	return conf
 }
 
-// ReadConfig reads the config.yaml and saves the properties in a variable.
-//
-// path is the absolute or relative path to the config file.
+// initConfig reads the config.yaml and saves the properties in a variable.
 func initConfig() error {
-	log.Printf("Loading configuraton from %s.\n", Path)
+	if Path == "" {
+		absPath, err := filepath.Abs(filepath.Dir(os.Args[0]))
+
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		Path = filepath.Join(absPath, "config.yaml")
+	}
+
+	log.Println(constants.MsgHeaderLoadingConfig, Path)
 
 	bytes, err := ioutil.ReadFile(Path)
 
@@ -62,5 +75,19 @@ func initConfig() error {
 		return err
 	}
 
+	if Debug {
+		printDebugInfo()
+	}
+
 	return nil
+}
+
+// printDebugInfo prints the configurations loaded from the file.
+func printDebugInfo() {
+	log.Debugf("%15v: %s", "IPAddrAPI", conf.System.IPAddrAPI)
+	log.Debugf("%15v: %s", "APIEndpoint", conf.CloudFlare.APIEndpoint)
+	log.Debugf("%15v: %s", "APIKey", conf.CloudFlare.APIKey)
+	log.Debugf("%15v: %s", "ZoneID", conf.CloudFlare.ZoneID)
+	log.Debugf("%15v: %s", "AuthEmail", conf.CloudFlare.AuthEmail)
+	log.Debugf("%15v: %s", "DomainName", conf.CloudFlare.DomainName)
 }
