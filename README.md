@@ -29,7 +29,7 @@ Primarily built for MIPS 74kc since my router has a MIPS 74kc CPU
 
 ### Build from source
 
-+ Install Go >= 11.1
++ Install Go >= 1.11
 
 + Get this repo
 
