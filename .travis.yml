@@ -2,10 +2,10 @@
 version: 1.1
 language: go
 go:
-  - "1.11.x"
+  - "1.12.x"
 install: true
 script:
-  - make
+  - GO111MODULE=on make
 notifications:
   email: false
 branches:
