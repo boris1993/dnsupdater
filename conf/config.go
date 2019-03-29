@@ -16,21 +16,21 @@ var once sync.Once
 var Debug bool
 
 var Path string
-var conf *Config
+var conf *config
 
-// Config describes the top-level properties in Config.yaml
-type Config struct {
+// config describes the top-level properties in config.yaml
+type config struct {
 	System            System       `yaml:"System"`
 	CloudFlareRecords []CloudFlare `yaml:"CloudFlareRecords"`
 }
 
-// System describes the System properties in Config.yaml
+// System describes the System properties in config.yaml
 type System struct {
 	IPAddrAPI             string `yaml:"IPAddrAPI"`
 	CloudFlareAPIEndpoint string `yaml:"CloudFlareAPIEndpoint"`
 }
 
-// CloudFlare describes the CloudFlare specialised properties in Config.yaml
+// CloudFlare describes the CloudFlare specialised properties in config.yaml
 type CloudFlare struct {
 	//APIEndpoint string `yaml:"APIEndpoint"`
 	APIKey     string `yaml:"APIKey"`
@@ -39,7 +39,7 @@ type CloudFlare struct {
 	DomainName string `yaml:"DomainName"`
 }
 
-func Get() *Config {
+func Get() *config {
 	once.Do(func() {
 		err := initConfig()
 
@@ -50,7 +50,7 @@ func Get() *Config {
 	return conf
 }
 
-// initConfig reads the Config.yaml and saves the properties in a variable.
+// initConfig reads the config.yaml and saves the properties in a variable.
 func initConfig() error {
 	if Path == "" {
 		absPath, err := filepath.Abs(filepath.Dir(os.Args[0]))
@@ -59,7 +59,7 @@ func initConfig() error {
 			log.Fatalln(err)
 		}
 
-		Path = filepath.Join(absPath, "Config.yaml")
+		Path = filepath.Join(absPath, "config.yaml")
 	}
 
 	log.Println(constants.MsgHeaderLoadingConfig, Path)

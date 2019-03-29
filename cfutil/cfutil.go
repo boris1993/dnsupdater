@@ -14,63 +14,6 @@ import (
 	"github.com/boris1993/dnsupdater/model"
 )
 
-// ProcessRecords takes the configuration and the current IP address,
-// then check and update each DNS record in CloudFlare
-func ProcessRecords(config *conf.Config, currentIPAddress string) error {
-
-	if config.System.CloudFlareAPIEndpoint == "" {
-		return errors.New(constants.ErrCloudFlareAPIAddressEmpty)
-	}
-
-	log.Println(len(config.CloudFlareRecords), constants.MsgCloudFlareRecordsFoundSuffix)
-
-	// Process each CloudFlare DNS record
-	for _, cloudFlareRecord := range config.CloudFlareRecords {
-
-		if cloudFlareRecord.APIKey == "" ||
-			cloudFlareRecord.AuthEmail == "" ||
-			cloudFlareRecord.DomainName == "" ||
-			cloudFlareRecord.ZoneID == "" {
-			// Print error and skip to next record when bad configuration found
-			log.Errorln(constants.ErrCloudFlareRecordConfigIncomplete)
-			continue
-		}
-
-		// Prints which record is being processed
-		log.Println(constants.MsgHeaderDomainProcessing, cloudFlareRecord.DomainName)
-
-		// Then fetch the IP address of the specified DNS record.
-		id, recordAddress, err := GetDnsRecordIpAddress(cloudFlareRecord)
-
-		if err != nil {
-			log.Errorln(err)
-		}
-
-		// Do nothing when the IP address didn't change.
-		if currentIPAddress == recordAddress {
-			log.Println(constants.MsgIPAddrNotChanged)
-			continue
-		} else {
-			// Update the IP address when changed.
-			status, err := UpdateDnsRecord(id, currentIPAddress, cloudFlareRecord)
-
-			if err != nil {
-				log.Errorln(err)
-				continue
-			}
-
-			if !status {
-				log.Errorln(constants.ErrMsgHeaderUpdateDNSRecordFailed, cloudFlareRecord.DomainName)
-				continue
-			} else {
-				log.Println(constants.MsgHeaderDNSRecordUpdateSuccessful, cloudFlareRecord.DomainName)
-			}
-		}
-	}
-
-	return nil
-}
-
 // GetDnsRecordIpAddress gets the IP address associated with the specified DNS record,
 // which is identified by the combination of the record type(hard coded as A type for now) and the domain name.
 //
