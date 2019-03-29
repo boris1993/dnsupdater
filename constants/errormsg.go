@@ -5,6 +5,8 @@ const MsgHeaderDNSRecordUpdateSuccessful = "Successfully updated the DNS record"
 const MsgHeaderCurrentIPAddr = "Current IP address is:"
 const MsgHeaderFetchingIPOfDomain = "Fetching the IP address of domain"
 const MsgHeaderLoadingConfig = "Loading configuration from"
+const MsgHeaderDomainProcessing = "Processing"
+const MsgCloudFlareRecordsFoundSuffix = "CloudFlare DNS record(s) found."
 
 const MsgFormatDNSFetchResult = "The IP address of %s is %s."
 const MsgFormatUpdatingDNS = "Updating the IP address of domain %s to %s."

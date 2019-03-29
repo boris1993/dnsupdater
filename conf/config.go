@@ -18,24 +18,25 @@ var Debug bool
 var Path string
 var conf *config
 
-// system describes the system properties in config.yaml
-type system struct {
-	IPAddrAPI string `yaml:"IPAddrAPI"`
-}
-
-// cloudFlare describes the CloudFlare specialised properties in config.yaml
-type cloudFlare struct {
-	APIEndpoint string `yaml:"APIEndpoint"`
-	APIKey      string `yaml:"APIKey"`
-	ZoneID      string `yaml:"ZoneID"`
-	AuthEmail   string `yaml:"AuthEmail"`
-	DomainName  string `yaml:"DomainName"`
-}
-
 // config describes the top-level properties in config.yaml
 type config struct {
-	System     system     `yaml:"System"`
-	CloudFlare cloudFlare `yaml:"CloudFlare"`
+	System            System       `yaml:"System"`
+	CloudFlareRecords []CloudFlare `yaml:"CloudFlareRecords"`
+}
+
+// System describes the System properties in config.yaml
+type System struct {
+	IPAddrAPI             string `yaml:"IPAddrAPI"`
+	CloudFlareAPIEndpoint string `yaml:"CloudFlareAPIEndpoint"`
+}
+
+// CloudFlare describes the CloudFlare specialised properties in config.yaml
+type CloudFlare struct {
+	//APIEndpoint string `yaml:"APIEndpoint"`
+	APIKey     string `yaml:"APIKey"`
+	ZoneID     string `yaml:"ZoneID"`
+	AuthEmail  string `yaml:"AuthEmail"`
+	DomainName string `yaml:"DomainName"`
 }
 
 func Get() *config {
@@ -84,10 +85,16 @@ func initConfig() error {
 
 // printDebugInfo prints the configurations loaded from the file.
 func printDebugInfo() {
-	log.Debugf("%15v: %s", "IPAddrAPI", conf.System.IPAddrAPI)
-	log.Debugf("%15v: %s", "APIEndpoint", conf.CloudFlare.APIEndpoint)
-	log.Debugf("%15v: %s", "APIKey", conf.CloudFlare.APIKey)
-	log.Debugf("%15v: %s", "ZoneID", conf.CloudFlare.ZoneID)
-	log.Debugf("%15v: %s", "AuthEmail", conf.CloudFlare.AuthEmail)
-	log.Debugf("%15v: %s", "DomainName", conf.CloudFlare.DomainName)
+	log.Debugf("%21v: %s", "IPAddrAPI", conf.System.IPAddrAPI)
+	log.Debugf("%21v: %s", "CloudFlareAPIEndpoint", conf.System.CloudFlareAPIEndpoint)
+	log.Debugln()
+
+	for _, item := range conf.CloudFlareRecords {
+		log.Debugln("========== CloudFlare DNS Record ==========")
+		log.Debugf("%10v: %s", "APIKey", item.APIKey)
+		log.Debugf("%10v: %s", "ZoneID", item.ZoneID)
+		log.Debugf("%10v: %s", "AuthEmail", item.AuthEmail)
+		log.Debugf("%10v: %s", "DomainName", item.DomainName)
+		log.Debugln()
+	}
 }
