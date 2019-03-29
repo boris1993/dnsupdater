@@ -16,29 +16,30 @@ var once sync.Once
 var Debug bool
 
 var Path string
-var conf *config
+var conf *Config
 
-// system describes the system properties in config.yaml
-type system struct {
-	IPAddrAPI string `yaml:"IPAddrAPI"`
+// Config describes the top-level properties in Config.yaml
+type Config struct {
+	System            System       `yaml:"System"`
+	CloudFlareRecords []CloudFlare `yaml:"CloudFlareRecords"`
 }
 
-// cloudFlare describes the CloudFlare specialised properties in config.yaml
-type cloudFlare struct {
-	APIEndpoint string `yaml:"APIEndpoint"`
-	APIKey      string `yaml:"APIKey"`
-	ZoneID      string `yaml:"ZoneID"`
-	AuthEmail   string `yaml:"AuthEmail"`
-	DomainName  string `yaml:"DomainName"`
+// System describes the System properties in Config.yaml
+type System struct {
+	IPAddrAPI             string `yaml:"IPAddrAPI"`
+	CloudFlareAPIEndpoint string `yaml:"CloudFlareAPIEndpoint"`
 }
 
-// config describes the top-level properties in config.yaml
-type config struct {
-	System     system     `yaml:"System"`
-	CloudFlare cloudFlare `yaml:"CloudFlare"`
+// CloudFlare describes the CloudFlare specialised properties in Config.yaml
+type CloudFlare struct {
+	//APIEndpoint string `yaml:"APIEndpoint"`
+	APIKey     string `yaml:"APIKey"`
+	ZoneID     string `yaml:"ZoneID"`
+	AuthEmail  string `yaml:"AuthEmail"`
+	DomainName string `yaml:"DomainName"`
 }
 
-func Get() *config {
+func Get() *Config {
 	once.Do(func() {
 		err := initConfig()
 
@@ -49,7 +50,7 @@ func Get() *config {
 	return conf
 }
 
-// initConfig reads the config.yaml and saves the properties in a variable.
+// initConfig reads the Config.yaml and saves the properties in a variable.
 func initConfig() error {
 	if Path == "" {
 		absPath, err := filepath.Abs(filepath.Dir(os.Args[0]))
@@ -58,7 +59,7 @@ func initConfig() error {
 			log.Fatalln(err)
 		}
 
-		Path = filepath.Join(absPath, "config.yaml")
+		Path = filepath.Join(absPath, "Config.yaml")
 	}
 
 	log.Println(constants.MsgHeaderLoadingConfig, Path)
@@ -84,10 +85,16 @@ func initConfig() error {
 
 // printDebugInfo prints the configurations loaded from the file.
 func printDebugInfo() {
-	log.Debugf("%15v: %s", "IPAddrAPI", conf.System.IPAddrAPI)
-	log.Debugf("%15v: %s", "APIEndpoint", conf.CloudFlare.APIEndpoint)
-	log.Debugf("%15v: %s", "APIKey", conf.CloudFlare.APIKey)
-	log.Debugf("%15v: %s", "ZoneID", conf.CloudFlare.ZoneID)
-	log.Debugf("%15v: %s", "AuthEmail", conf.CloudFlare.AuthEmail)
-	log.Debugf("%15v: %s", "DomainName", conf.CloudFlare.DomainName)
+	log.Debugf("%21v: %s", "IPAddrAPI", conf.System.IPAddrAPI)
+	log.Debugf("%21v: %s", "CloudFlareAPIEndpoint", conf.System.CloudFlareAPIEndpoint)
+	log.Debugln()
+
+	for _, item := range conf.CloudFlareRecords {
+		log.Debugln("========== CloudFlare DNS Record ==========")
+		log.Debugf("%10v: %s", "APIKey", item.APIKey)
+		log.Debugf("%10v: %s", "ZoneID", item.ZoneID)
+		log.Debugf("%10v: %s", "AuthEmail", item.AuthEmail)
+		log.Debugf("%10v: %s", "DomainName", item.DomainName)
+		log.Debugln()
+	}
 }
