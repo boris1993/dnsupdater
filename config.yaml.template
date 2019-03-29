@@ -1,9 +1,13 @@
 ---
 System:
   IPAddrAPI: "https://api.ipify.org/"
-CloudFlare:
-  APIEndpoint: "https://api.cloudflare.com/client/v4"
-  APIKey: "YOUR_CLOUDFLARE_API_KEY"
-  ZoneID: "ZONE_ID_OF_YOUR_DOMAIN"
-  AuthEmail: "EMAIL_FOR_LOGGING_INTO_CLOUDFLARE"
-  DomainName: "FULL_DOMAIN_YOU_WANT_TO_UPDATE. e.g.:test.example.com"
+  CloudFlareAPIEndpoint: "https://api.cloudflare.com/client/v4"
+CloudFlareRecords:
+  - APIKey: "YOUR_CLOUDFLARE_API_KEY"
+    ZoneID: "ZONE_ID_OF_YOUR_DOMAIN"
+    AuthEmail: "EMAIL_FOR_LOGGING_INTO_CLOUDFLARE"
+    DomainName: "FULL_DOMAIN_YOU_WANT_TO_UPDATE. e.g.:test1.example.com"
+  - APIKey: "YOUR_CLOUDFLARE_API_KEY"
+    ZoneID: "ZONE_ID_OF_YOUR_DOMAIN"
+    AuthEmail: "EMAIL_FOR_LOGGING_INTO_CLOUDFLARE"
+    DomainName: "FULL_DOMAIN_YOU_WANT_TO_UPDATE. e.g.:test2.example.com"
