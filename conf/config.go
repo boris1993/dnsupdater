@@ -16,21 +16,22 @@ var once sync.Once
 var Debug bool
 
 var Path string
-var conf *config
+var conf *Config
 
-// config describes the top-level properties in config.yaml
-type config struct {
+// Config describes the top-level properties in Config.yaml
+type Config struct {
 	System            System       `yaml:"System"`
 	CloudFlareRecords []CloudFlare `yaml:"CloudFlareRecords"`
+	AliDNSRecords     []AliDNS     `yaml:"AliDNSRecords"`
 }
 
-// System describes the System properties in config.yaml
+// System describes the System properties in Config.yaml
 type System struct {
 	IPAddrAPI             string `yaml:"IPAddrAPI"`
 	CloudFlareAPIEndpoint string `yaml:"CloudFlareAPIEndpoint"`
 }
 
-// CloudFlare describes the CloudFlare specialised properties in config.yaml
+// CloudFlare describes the CloudFlare specialised properties in Config.yaml
 type CloudFlare struct {
 	//APIEndpoint string `yaml:"APIEndpoint"`
 	APIKey     string `yaml:"APIKey"`
@@ -39,7 +40,14 @@ type CloudFlare struct {
 	DomainName string `yaml:"DomainName"`
 }
 
-func Get() *config {
+type AliDNS struct {
+	AccessKeyID     string `yaml:"AccessKeyID"`
+	AccessKeySecret string `yaml:"AccessKeySecret"`
+	RegionID        string `yaml:"RegionID"`
+	DomainName      string `yaml:"DomainName"`
+}
+
+func Get() *Config {
 	once.Do(func() {
 		err := initConfig()
 
@@ -50,7 +58,7 @@ func Get() *config {
 	return conf
 }
 
-// initConfig reads the config.yaml and saves the properties in a variable.
+// initConfig reads the Config.yaml and saves the properties in a variable.
 func initConfig() error {
 	if Path == "" {
 		absPath, err := filepath.Abs(filepath.Dir(os.Args[0]))
@@ -59,7 +67,7 @@ func initConfig() error {
 			log.Fatalln(err)
 		}
 
-		Path = filepath.Join(absPath, "config.yaml")
+		Path = filepath.Join(absPath, "Config.yaml")
 	}
 
 	log.Println(constants.MsgHeaderLoadingConfig, Path)
@@ -95,6 +103,15 @@ func printDebugInfo() {
 		log.Debugf("%10v: %s", "ZoneID", item.ZoneID)
 		log.Debugf("%10v: %s", "AuthEmail", item.AuthEmail)
 		log.Debugf("%10v: %s", "DomainName", item.DomainName)
+		log.Debugln()
+	}
+
+	for _, item := range conf.AliDNSRecords {
+		log.Debugln("========== Aliyun DNS Record ==========")
+		log.Debugf("%15v: %s", "AccessID", item.AccessKeyID)
+		log.Debugf("%15v: %s", "AccessKeySecret", item.AccessKeySecret)
+		log.Debugf("%15v: %s", "RegionID", item.RegionID)
+		log.Debugf("%15v: %s", "DomainName", item.DomainName)
 		log.Debugln()
 	}
 }

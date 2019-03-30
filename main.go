@@ -1,7 +1,9 @@
 package main
 
 import (
+	"errors"
 	"flag"
+	"github.com/boris1993/dnsupdater/alidnsutil"
 	"github.com/boris1993/dnsupdater/cfutil"
 	"github.com/boris1993/dnsupdater/conf"
 	"github.com/boris1993/dnsupdater/constants"
@@ -12,47 +14,25 @@ import (
 )
 
 func main() {
+	var err error
+
 	var config = conf.Get()
 
 	// Fetch the current external IP address.
-	ipAddress := getIPAddr()
+	currentIPAddress, err := getCurrentIPAddress(config)
 
-	log.Println(len(config.CloudFlareRecords), constants.MsgCloudFlareRecordsFoundSuffix)
-
-	// Process each CloudFlare DNS record
-	for _, cloudFlareRecord := range config.CloudFlareRecords {
-
-		// Prints which record is being processed
-		log.Println(constants.MsgHeaderDomainProcessing, cloudFlareRecord.DomainName)
-
-		// Then fetch the IP address of the specified DNS record.
-		id, recordAddress, err := cfutil.GetDnsRecordIpAddress(cloudFlareRecord)
-
-		if err != nil {
-			log.Errorln(err)
-		}
-
-		// Do nothing when the IP address didn't change.
-		if ipAddress == recordAddress {
-			log.Println(constants.MsgIPAddrNotChanged)
-			continue
-		} else {
-			// Update the IP address when changed.
-			status, err := cfutil.UpdateDnsRecord(id, ipAddress, cloudFlareRecord)
-
-			if err != nil {
-				log.Errorln(err)
-				continue
-			}
-
-			if !status {
-				log.Errorln(constants.ErrMsgHeaderUpdateDNSRecordFailed, cloudFlareRecord.DomainName)
-				continue
-			} else {
-				log.Println(constants.MsgHeaderDNSRecordUpdateSuccessful, cloudFlareRecord.DomainName)
-			}
-		}
+	if err != nil {
+		log.Fatalln(err)
 	}
+
+	// Process CloudFlare records
+	err = cfutil.ProcessRecords(config, currentIPAddress)
+
+	if err != nil {
+		log.Errorln(err)
+	}
+
+	alidnsutil.ProcessRecords(config, currentIPAddress)
 
 	os.Exit(0)
 }
@@ -72,16 +52,18 @@ func init() {
 	}
 }
 
-// getIPAddr returns the external IP address for your network
-func getIPAddr() string {
-	var config = conf.Get()
+// getCurrentIPAddress returns the external IP address for your network
+func getCurrentIPAddress(config *conf.Config) (string, error) {
+	if config.System.IPAddrAPI == "" {
+		return "", errors.New(constants.ErrIPAddressFetchingAPIEmpty)
+	}
 
 	log.Println(constants.MsgCheckingCurrentIPAddr)
 
 	resp, err := http.Get(config.System.IPAddrAPI)
 
 	if err != nil {
-		log.Fatalln(err)
+		return "", err
 	}
 
 	// Handle errors when closing the HTTP connection
@@ -96,7 +78,7 @@ func getIPAddr() string {
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		log.Fatalln(err)
+		return "", err
 	}
 
 	// Body only contains the IP address
@@ -104,5 +86,5 @@ func getIPAddr() string {
 
 	log.Println(constants.MsgHeaderCurrentIPAddr, ipAddress)
 
-	return ipAddress
+	return ipAddress, nil
 }
