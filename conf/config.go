@@ -22,6 +22,7 @@ var conf *Config
 type Config struct {
 	System            System       `yaml:"System"`
 	CloudFlareRecords []CloudFlare `yaml:"CloudFlareRecords"`
+	AliDNSRecords     []AliDNS     `yaml:"AliDNSRecords"`
 }
 
 // System describes the System properties in Config.yaml
@@ -37,6 +38,13 @@ type CloudFlare struct {
 	ZoneID     string `yaml:"ZoneID"`
 	AuthEmail  string `yaml:"AuthEmail"`
 	DomainName string `yaml:"DomainName"`
+}
+
+type AliDNS struct {
+	AccessKeyID     string `yaml:"AccessKeyID"`
+	AccessKeySecret string `yaml:"AccessKeySecret"`
+	RegionID        string `yaml:"RegionID"`
+	DomainName      string `yaml:"DomainName"`
 }
 
 func Get() *Config {
@@ -95,6 +103,15 @@ func printDebugInfo() {
 		log.Debugf("%10v: %s", "ZoneID", item.ZoneID)
 		log.Debugf("%10v: %s", "AuthEmail", item.AuthEmail)
 		log.Debugf("%10v: %s", "DomainName", item.DomainName)
+		log.Debugln()
+	}
+
+	for _, item := range conf.AliDNSRecords {
+		log.Debugln("========== Aliyun DNS Record ==========")
+		log.Debugf("%15v: %s", "AccessID", item.AccessKeyID)
+		log.Debugf("%15v: %s", "AccessKeySecret", item.AccessKeySecret)
+		log.Debugf("%15v: %s", "RegionID", item.RegionID)
+		log.Debugf("%15v: %s", "DomainName", item.DomainName)
 		log.Debugln()
 	}
 }

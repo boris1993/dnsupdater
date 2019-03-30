@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"flag"
+	"github.com/boris1993/dnsupdater/alidnsutil"
 	"github.com/boris1993/dnsupdater/cfutil"
 	"github.com/boris1993/dnsupdater/conf"
 	"github.com/boris1993/dnsupdater/constants"
@@ -30,6 +31,8 @@ func main() {
 	if err != nil {
 		log.Errorln(err)
 	}
+
+	alidnsutil.ProcessRecords(config, currentIPAddress)
 
 	os.Exit(0)
 }
