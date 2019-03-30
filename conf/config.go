@@ -67,7 +67,7 @@ func initConfig() error {
 			log.Fatalln(err)
 		}
 
-		Path = filepath.Join(absPath, "Config.yaml")
+		Path = filepath.Join(absPath, "config.yaml")
 	}
 
 	log.Println(constants.MsgHeaderLoadingConfig, Path)
