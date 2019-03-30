@@ -11,3 +11,8 @@ CloudFlareRecords:
     ZoneID: "ZONE_ID_OF_YOUR_DOMAIN"
     AuthEmail: "EMAIL_FOR_LOGGING_INTO_CLOUDFLARE"
     DomainName: "FULL_DOMAIN_YOU_WANT_TO_UPDATE. e.g.:test2.example.com"
+AliDNSRecords:
+  - AccessKeyID: "YOUR_ALIYUN_ACCESS_KEY_ID"
+    AccessKeySecret: "YOUR_ALIYUN_ACCESS_KEY_SECRET"
+    RegionID: "cn-hangzhou" # Only this region is accepted so DO NOT MODIFY THIS PROPERTY
+    DomainName: "FULL_DOMAIN_YOU_WANT_TO_UPDATE. e.g.:test3.example.com"
