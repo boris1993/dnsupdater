@@ -1,7 +1,8 @@
 # dnsupdater
 |master| dev |
 |:----:|:---:|
-|[![Build Status](https://travis-ci.org/boris1993/dnsupdater.svg?branch=master)](https://travis-ci.org/boris1993/dnsupdater)|[![Build Status](https://travis-ci.org/boris1993/dnsupdater.svg?branch=dev)](https://travis-ci.org/boris1993/dnsupdater)|
+|[![Build Status](https://travis-ci.org/boris1993/dnsupdater.svg?branch=master)](https://travis-ci.org/boris1993/dnsupdater)[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fboris1993%2Fdnsupdater.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fboris1993%2Fdnsupdater?ref=badge_shield)
+|[![Build Status](https://travis-ci.org/boris1993/dnsupdater.svg?branch=dev)](https://travis-ci.org/boris1993/dnsupdater)|
 
 Obtain your current external IP address and update to the specified DNS record on CloudFlare 
 
@@ -83,3 +84,7 @@ make help
 
 Or you can also specify your own `GOARCH` and `GOOS` (and maybe `GOMIPS`) to build for your platform 
 as long as Go provides support to it.  
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fboris1993%2Fdnsupdater.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fboris1993%2Fdnsupdater?ref=badge_large)
