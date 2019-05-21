@@ -36,9 +36,6 @@ func ProcessRecords(config *conf.Config, currentIPAddress string) {
 		log.Println(constants.MsgHeaderDomainProcessing, aliDNSRecord.DomainName)
 
 		recordId, recordIP, err := getDomainRecordID(
-			aliDNSRecord.RegionID,
-			aliDNSRecord.AccessKeyID,
-			aliDNSRecord.AccessKeySecret,
 			aliDNSRecord.DomainName,
 			client)
 
@@ -55,7 +52,7 @@ func ProcessRecords(config *conf.Config, currentIPAddress string) {
 		// RR is the 2nd level domain
 		RR := strings.Split(aliDNSRecord.DomainName, ".")[0]
 
-		status, err := updateRecord(recordId, RR, currentIPAddress, client)
+		status, err := updateAliDNSRecord(recordId, RR, currentIPAddress, client)
 
 		if err != nil {
 			log.Errorln(err)
@@ -73,9 +70,14 @@ func ProcessRecords(config *conf.Config, currentIPAddress string) {
 // getDomainRecordID fetches the information of the specified record.
 //
 // See document: https://help.aliyun.com/document_detail/29776.html?spm=a2c4g.11186623.2.37.1de5425696HU8m#h2-u8FD4u56DEu53C2u65703
-func getDomainRecordID(regionId string, accessKeyId string, accessKeySecret string, domainName string, client *alidns.Client) (recordId string, recordAddress string, err error) {
+func getDomainRecordID(domainName string, client *alidns.Client) (recordId string, recordAddress string, err error) {
 	request := alidns.CreateDescribeDomainRecordsRequest()
 
+	// Separate the domain name into several parts.
+	// For a 3-level domain name, like "test.example.com",
+	// domainNameParts[0] will be "test",
+	// domainNameParts[1] will be "example",
+	// and domainNameParts[2] will be "com"
 	domainNameParts := strings.Split(domainName, ".")
 
 	request.DomainName = strings.Join([]string{domainNameParts[1], domainNameParts[2]}, ".")
@@ -90,14 +92,17 @@ func getDomainRecordID(regionId string, accessKeyId string, accessKeySecret stri
 	log.Println(constants.MsgHeaderFetchingIPOfDomain, domainName)
 
 	response, err := client.DescribeDomainRecords(request)
-
 	if err != nil {
 		return "", "", err
 	}
 
 	log.Debugln("Response:\n" + response.GetHttpContentString())
 
-	if len(response.DomainRecords.Record) != 1 {
+	switch {
+	case len(response.DomainRecords.Record) == 0:
+		err := errors.New(constants.ErrNoDNSRecordFoundPrefix + domainName)
+		return "", "", err
+	case len(response.DomainRecords.Record) != 1:
 		err := errors.New(constants.ErrMultipleDNSRecordsFound)
 		return "", "", err
 	}
@@ -112,7 +117,7 @@ func getDomainRecordID(regionId string, accessKeyId string, accessKeySecret stri
 // Updates the IP address of the specified domain.
 //
 // See document: https://help.aliyun.com/document_detail/29774.html?spm=a2c4g.11186623.2.35.1de5425696HU8m
-func updateRecord(recordId string, RR string, currentIPAddress string, client *alidns.Client) (bool, error) {
+func updateAliDNSRecord(recordId string, RR string, currentIPAddress string, client *alidns.Client) (bool, error) {
 	request := alidns.CreateUpdateDomainRecordRequest()
 
 	request.RecordId = recordId
@@ -137,10 +142,11 @@ func updateRecord(recordId string, RR string, currentIPAddress string, client *a
 	}
 
 	// See document: https://help.aliyun.com/document_detail/29774.html?spm=a2c4g.11186623.2.35.1de5425696HU8m#h2-u9519u8BEFu78014
-	switch response.GetHttpStatus() {
+	httpStatus := response.GetHttpStatus()
+	switch httpStatus {
 	case http.StatusOK:
 		return true, nil
 	default:
-		return false, err
+		return false, errors.New(response.GetHttpContentString())
 	}
 }
