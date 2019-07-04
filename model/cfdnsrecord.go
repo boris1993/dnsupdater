@@ -6,10 +6,15 @@ package model
 // See https://api.cloudflare.com/#dns-records-for-a-zone-dns-record-details
 type CfDnsRecord struct {
 	Success    bool                  `json:"success"`
-	Errors     []string              `json:"errors"`
+	Errors     []errorMessage        `json:"errors"`
 	Messages   []string              `json:"messages"`
 	Result     []cfDnsRecordResult   `json:"result"`
 	ResultInfo cfDnsRecordResultInfo `json:"result_info"`
+}
+
+type errorMessage struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
 }
 
 // cfDnsRecordResult is the structure of the results part in CfDnsRecord.
@@ -61,7 +66,7 @@ type UpdateRecordData struct {
 // See https://api.cloudflare.com/#dns-records-for-a-zone-update-dns-record
 type UpdateRecordResult struct {
 	Success  bool              `json:"success"`
-	Errors   []string          `json:"errors"`
+	Errors   []errorMessage    `json:"errors"`
 	Messages []string          `json:"messages"`
 	Result   cfDnsRecordResult `json:"result"`
 }
