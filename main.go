@@ -53,7 +53,7 @@ func init() {
 }
 
 // getCurrentIPAddress returns the external IP address for your network
-func getCurrentIPAddress(config *conf.Config) (string, error) {
+func getCurrentIPAddress(config conf.Config) (string, error) {
 	if config.System.IPAddrAPI == "" {
 		return "", errors.New(constants.ErrIPAddressFetchingAPIEmpty)
 	}

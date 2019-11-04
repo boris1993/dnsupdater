@@ -14,9 +14,9 @@ import (
 	"github.com/boris1993/dnsupdater/model"
 )
 
-// ProcessRecords takes the configuration and the current IP address,
+// ProcessRecords takes the configuration as well as the current IP address,
 // then check and update each DNS record in CloudFlare
-func ProcessRecords(config *conf.Config, currentIPAddress string) error {
+func ProcessRecords(config conf.Config, currentIPAddress string) error {
 
 	if config.System.CloudFlareAPIEndpoint == "" {
 		return errors.New(constants.ErrCloudFlareAPIAddressEmpty)
@@ -73,9 +73,9 @@ func ProcessRecords(config *conf.Config, currentIPAddress string) error {
 }
 
 // getCFDnsRecordIpAddress gets the IP address associated with the specified DNS record,
-// which is identified by the combination of the record type(hard coded as A type for now) and the domain name.
+// which is identified by the combination of the record type(hard coded as A type for now), and the domain name.
 //
-// cloudFlareRecord contains the information which this process needed, and it is coming from the config.yaml.
+// cloudFlareRecord contains the information, which are needed by this process, and it is coming from the config.yaml.
 //
 // The first value returned is the ID of this DNS record,
 // the second value returned is the IP address of this record,
@@ -88,6 +88,10 @@ func getCFDnsRecordIpAddress(cloudFlareRecord conf.CloudFlare) (string, string, 
 	req, err := http.NewRequest(http.MethodGet,
 		APIEndpoint+"/zones/"+cloudFlareRecord.ZoneID+"/dns_records?type=A&name="+cloudFlareRecord.DomainName,
 		nil)
+
+	if err != nil {
+		return "", "", err
+	}
 
 	req.Header.Add("X-Auth-Email", cloudFlareRecord.AuthEmail)
 	req.Header.Add("X-Auth-Key", cloudFlareRecord.APIKey)
@@ -102,6 +106,7 @@ func getCFDnsRecordIpAddress(cloudFlareRecord conf.CloudFlare) (string, string, 
 	}
 
 	if resp.StatusCode != 200 {
+		// TODO Maybe return the corresponding error message instead of the error code
 		return "", "", errors.New(resp.Status)
 	}
 
@@ -147,8 +152,7 @@ func getCFDnsRecordIpAddress(cloudFlareRecord conf.CloudFlare) (string, string, 
 
 // updateCFDNSRecord updates the specified DNS record identified by the record ID.
 //
-// id is the record ID, address is the IP address to be written,
-// and cloudFlareRecord contains the information corresponding to the DNS record to be updated.
+// id is the record ID, address is the IP address to be written, and cloudFlareRecord contains the information corresponding to the DNS record to be updated.
 //
 // The return value is the status(true or false) of the update process,
 // or an error will be returned if any error occurs.

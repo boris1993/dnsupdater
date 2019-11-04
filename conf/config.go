@@ -16,7 +16,7 @@ var once sync.Once
 var Debug bool
 
 var Path string
-var conf *Config
+var conf Config
 
 // Config describes the top-level properties in Config.yaml
 type Config struct {
@@ -47,7 +47,7 @@ type AliDNS struct {
 	DomainName      string `yaml:"DomainName"`
 }
 
-func Get() *Config {
+func Get() Config {
 	once.Do(func() {
 		err := initConfig()
 
