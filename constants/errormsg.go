@@ -2,9 +2,10 @@
 package constants
 
 const MsgHeaderDNSRecordUpdateSuccessful = "Successfully updated the DNS record"
-const MsgHeaderCurrentIPAddr = "Current IP address is:"
+const MsgHeaderCurrentIPAddr = "Current IPv4 address is:"
+const MsgHeaderCurrentIPv6Addr = "Current IPv6 address is:"
 const MsgHeaderFetchingIPOfDomain = "Fetching the IP address of domain"
-const MsgHeaderLoadingConfig = "Loading configuration from"
+const MsgHeaderLoadingConfig = "Loading configurations from"
 const MsgHeaderDomainProcessing = "Processing"
 const MsgCloudFlareRecordsFoundSuffix = "CloudFlare DNS record(s) found"
 const MsgAliDNSRecordsFoundSuffix = "Aliyun DNS record(s) found"
@@ -26,3 +27,4 @@ const ErrIPAddressFetchingAPIEmpty = "API address for fetching current IP addres
 const ErrCloudFlareAPIAddressEmpty = "CloudFlare API endpoint address cannot be empty"
 const ErrCloudFlareRecordConfigIncomplete = "Incomplete CloudFlare configuration found"
 const ErrAliDNSRecordConfigIncomplete = "Incomplete Aliyun DNS configuration found"
+const ErrInvalidDomainType = "Invalid domain type. Only A and AAAA records are supported for now."

@@ -16,7 +16,7 @@ var once sync.Once
 var Debug bool
 
 var Path string
-var conf *Config
+var conf Config
 
 // Config describes the top-level properties in Config.yaml
 type Config struct {
@@ -28,6 +28,7 @@ type Config struct {
 // System describes the System properties in Config.yaml
 type System struct {
 	IPAddrAPI             string `yaml:"IPAddrAPI"`
+	IPv6AddrAPI           string `yaml:"IPv6AddrAPI"`
 	CloudFlareAPIEndpoint string `yaml:"CloudFlareAPIEndpoint"`
 }
 
@@ -38,6 +39,7 @@ type CloudFlare struct {
 	ZoneID     string `yaml:"ZoneID"`
 	AuthEmail  string `yaml:"AuthEmail"`
 	DomainName string `yaml:"DomainName"`
+	DomainType string `yaml:"DomainType"`
 }
 
 type AliDNS struct {
@@ -47,7 +49,7 @@ type AliDNS struct {
 	DomainName      string `yaml:"DomainName"`
 }
 
-func Get() *Config {
+func Get() Config {
 	once.Do(func() {
 		err := initConfig()
 
@@ -103,6 +105,7 @@ func printDebugInfo() {
 		log.Debugf("%10v: %s", "ZoneID", item.ZoneID)
 		log.Debugf("%10v: %s", "AuthEmail", item.AuthEmail)
 		log.Debugf("%10v: %s", "DomainName", item.DomainName)
+		log.Debugf("%10v: %s", "DomainType", item.DomainType)
 		log.Debugln()
 	}
 
