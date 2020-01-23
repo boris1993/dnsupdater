@@ -16,7 +16,7 @@ import (
 
 // ProcessRecords takes the configuration as well as the current IP address,
 // then check and update each DNS record in CloudFlare
-func ProcessRecords(config conf.Config, currentIPAddress string) error {
+func ProcessRecords(config conf.Config, currentIPv4Address string, currentIPv6Address string) error {
 
 	if config.System.CloudFlareAPIEndpoint == "" {
 		return errors.New(constants.ErrCloudFlareAPIAddressEmpty)
@@ -30,6 +30,7 @@ func ProcessRecords(config conf.Config, currentIPAddress string) error {
 		if cloudFlareRecord.APIKey == "" ||
 			cloudFlareRecord.AuthEmail == "" ||
 			cloudFlareRecord.DomainName == "" ||
+			cloudFlareRecord.DomainType == "" ||
 			cloudFlareRecord.ZoneID == "" {
 			// Print error and skip to next record when bad configuration found
 			log.Errorln(constants.ErrCloudFlareRecordConfigIncomplete)
@@ -38,6 +39,15 @@ func ProcessRecords(config conf.Config, currentIPAddress string) error {
 
 		// Prints which record is being processed
 		log.Println(constants.MsgHeaderDomainProcessing, cloudFlareRecord.DomainName)
+
+		var newIpAddress = ""
+		if cloudFlareRecord.DomainType == "A" {
+			newIpAddress = currentIPv4Address
+		} else if cloudFlareRecord.DomainType == "AAAA" {
+			newIpAddress = currentIPv6Address
+		} else {
+			log.Errorln(constants.ErrInvalidDomainType)
+		}
 
 		// Then fetch the IP address of the specified DNS record
 		id, recordAddress, err := getCFDnsRecordIpAddress(cloudFlareRecord)
@@ -48,12 +58,12 @@ func ProcessRecords(config conf.Config, currentIPAddress string) error {
 		}
 
 		// Do nothing when the IP address didn't change.
-		if currentIPAddress == recordAddress {
+		if newIpAddress == recordAddress {
 			log.Println(constants.MsgIPAddrNotChanged)
 			continue
 		} else {
 			// Update the IP address when changed.
-			status, err := updateCFDNSRecord(id, currentIPAddress, cloudFlareRecord)
+			status, err := updateCFDNSRecord(id, cloudFlareRecord.DomainType, newIpAddress, cloudFlareRecord)
 
 			if err != nil {
 				log.Errorln(err)
@@ -86,12 +96,14 @@ func getCFDnsRecordIpAddress(cloudFlareRecord conf.CloudFlare) (string, string, 
 	client := &http.Client{}
 
 	req, err := http.NewRequest(http.MethodGet,
-		APIEndpoint+"/zones/"+cloudFlareRecord.ZoneID+"/dns_records?type=A&name="+cloudFlareRecord.DomainName,
+		APIEndpoint+"/zones/"+cloudFlareRecord.ZoneID+"/dns_records?type="+cloudFlareRecord.DomainType+"&name="+cloudFlareRecord.DomainName,
 		nil)
 
 	if err != nil {
 		return "", "", err
 	}
+
+	log.Debug("Request URI: \n" + req.URL.String())
 
 	req.Header.Add("X-Auth-Email", cloudFlareRecord.AuthEmail)
 	req.Header.Add("X-Auth-Key", cloudFlareRecord.APIKey)
@@ -156,13 +168,13 @@ func getCFDnsRecordIpAddress(cloudFlareRecord conf.CloudFlare) (string, string, 
 //
 // The return value is the status(true or false) of the update process,
 // or an error will be returned if any error occurs.
-func updateCFDNSRecord(id string, address string, cloudFlareRecord conf.CloudFlare) (bool, error) {
+func updateCFDNSRecord(id string, recordType string, address string, cloudFlareRecord conf.CloudFlare) (bool, error) {
 	APIEndpoint := conf.Get().System.CloudFlareAPIEndpoint
 
 	client := &http.Client{}
 
 	updateRecordData := model.UpdateRecordData{}
-	updateRecordData.RecordType = "A"
+	updateRecordData.RecordType = recordType
 	updateRecordData.Name = cloudFlareRecord.DomainName
 	updateRecordData.Content = address
 
