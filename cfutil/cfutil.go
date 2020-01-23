@@ -83,7 +83,7 @@ func ProcessRecords(config conf.Config, currentIPv4Address string, currentIPv6Ad
 }
 
 // getCFDnsRecordIpAddress gets the IP address associated with the specified DNS record,
-// which is identified by the combination of the record type(hard coded as A type for now), and the domain name.
+// which is identified by the combination of the record type, and the domain name.
 //
 // cloudFlareRecord contains the information, which are needed by this process, and it is coming from the config.yaml.
 //
