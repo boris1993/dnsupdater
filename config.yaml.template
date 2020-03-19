@@ -1,19 +1,16 @@
 ---
 System:
   IPAddrAPI: "https://api.ipify.org/"
-  IPv6AddrAPI: "https://api6.ipify.org/"
   CloudFlareAPIEndpoint: "https://api.cloudflare.com/client/v4"
 CloudFlareRecords:
   - APIKey: "YOUR_CLOUDFLARE_API_KEY"
     ZoneID: "ZONE_ID_OF_YOUR_DOMAIN"
     AuthEmail: "EMAIL_FOR_LOGGING_INTO_CLOUDFLARE"
     DomainName: "FULL_DOMAIN_YOU_WANT_TO_UPDATE. e.g.:test1.example.com"
-    DomainType: "Type of this domain. A for IPv4 records, and AAAA for IPv6 records"
   - APIKey: "YOUR_CLOUDFLARE_API_KEY"
     ZoneID: "ZONE_ID_OF_YOUR_DOMAIN"
     AuthEmail: "EMAIL_FOR_LOGGING_INTO_CLOUDFLARE"
     DomainName: "FULL_DOMAIN_YOU_WANT_TO_UPDATE. e.g.:test2.example.com"
-    DomainType: "Type of this domain. A for IPv4 records, and AAAA for IPv6 records"
 AliDNSRecords:
   - AccessKeyID: "YOUR_ALIYUN_ACCESS_KEY_ID"
     AccessKeySecret: "YOUR_ALIYUN_ACCESS_KEY_SECRET"

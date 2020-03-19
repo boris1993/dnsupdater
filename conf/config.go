@@ -28,7 +28,6 @@ type Config struct {
 // System describes the System properties in Config.yaml
 type System struct {
 	IPAddrAPI             string `yaml:"IPAddrAPI"`
-	IPv6AddrAPI           string `yaml:"IPv6AddrAPI"`
 	CloudFlareAPIEndpoint string `yaml:"CloudFlareAPIEndpoint"`
 }
 
@@ -39,7 +38,6 @@ type CloudFlare struct {
 	ZoneID     string `yaml:"ZoneID"`
 	AuthEmail  string `yaml:"AuthEmail"`
 	DomainName string `yaml:"DomainName"`
-	DomainType string `yaml:"DomainType"`
 }
 
 type AliDNS struct {
@@ -105,7 +103,6 @@ func printDebugInfo() {
 		log.Debugf("%10v: %s", "ZoneID", item.ZoneID)
 		log.Debugf("%10v: %s", "AuthEmail", item.AuthEmail)
 		log.Debugf("%10v: %s", "DomainName", item.DomainName)
-		log.Debugf("%10v: %s", "DomainType", item.DomainType)
 		log.Debugln()
 	}
 
