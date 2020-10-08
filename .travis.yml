@@ -11,7 +11,7 @@ env:
   matrix:
   - GO111MODULE=on
 script:
-- make -f scripts/Makefile ROOT_DIR=.
+- make -f scripts/Makefile ROOT_DIR=$(pwd)
 - sonar-scanner
 cache:
   directories:
