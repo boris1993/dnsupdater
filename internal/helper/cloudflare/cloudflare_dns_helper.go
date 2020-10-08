@@ -1,22 +1,22 @@
 // Package cfutil provides utilities about manipulating a CloudFlare DNS record.
-package cfutil
+package cloudflare
 
 import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"github.com/boris1993/dnsupdater/conf"
-	"github.com/boris1993/dnsupdater/constants"
+	"github.com/boris1993/dnsupdater/internal/configs"
+	"github.com/boris1993/dnsupdater/internal/constants"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 
-	"github.com/boris1993/dnsupdater/model"
+	"github.com/boris1993/dnsupdater/internal/model"
 )
 
 // ProcessRecords takes the configuration as well as the current IP address,
 // then check and update each DNS record in CloudFlare
-func ProcessRecords(config conf.Config, currentAddress string) error {
+func ProcessRecords(config configs.Config, currentAddress string) error {
 
 	if config.System.CloudFlareAPIEndpoint == "" {
 		return errors.New(constants.ErrCloudFlareAPIAddressEmpty)
@@ -82,8 +82,8 @@ func ProcessRecords(config conf.Config, currentAddress string) error {
 // The first value returned is the ID of this DNS record,
 // the second value returned is the IP address of this record,
 // or an error will be returned if any error occurs.
-func getCFDnsRecordIpAddress(cloudFlareRecord conf.CloudFlare) (string, string, error) {
-	APIEndpoint := conf.Get().System.CloudFlareAPIEndpoint
+func getCFDnsRecordIpAddress(cloudFlareRecord configs.CloudFlare) (string, string, error) {
+	APIEndpoint := configs.Get().System.CloudFlareAPIEndpoint
 
 	client := &http.Client{}
 
@@ -160,8 +160,8 @@ func getCFDnsRecordIpAddress(cloudFlareRecord conf.CloudFlare) (string, string, 
 //
 // The return value is the status(true or false) of the update process,
 // or an error will be returned if any error occurs.
-func updateCFDNSRecord(id string, address string, cloudFlareRecord conf.CloudFlare) (bool, error) {
-	APIEndpoint := conf.Get().System.CloudFlareAPIEndpoint
+func updateCFDNSRecord(id string, address string, cloudFlareRecord configs.CloudFlare) (bool, error) {
+	APIEndpoint := configs.Get().System.CloudFlareAPIEndpoint
 
 	client := &http.Client{}
 

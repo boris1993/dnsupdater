@@ -1,10 +1,10 @@
-package alidnsutil
+package aliyun
 
 import (
 	"errors"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/alidns"
-	"github.com/boris1993/dnsupdater/conf"
-	"github.com/boris1993/dnsupdater/constants"
+	"github.com/boris1993/dnsupdater/internal/configs"
+	"github.com/boris1993/dnsupdater/internal/constants"
 	log "github.com/sirupsen/logrus"
 	"net/http"
 	"strings"
@@ -12,7 +12,7 @@ import (
 
 // ProcessRecords takes the configuration as well as the current IP address
 // then check and update each DNS record in Aliyun DNS
-func ProcessRecords(config conf.Config, currentIPAddress string) {
+func ProcessRecords(config configs.Config, currentIPAddress string) {
 	log.Println(len(config.AliDNSRecords), constants.MsgAliDNSRecordsFoundSuffix)
 
 	for _, aliDNSRecord := range config.AliDNSRecords {
