@@ -11,7 +11,7 @@ env:
   matrix:
   - GO111MODULE=on
 script:
-- make
+- make -f scripts/Makefile
 - sonar-scanner
 cache:
   directories:
