@@ -1,17 +1,14 @@
 # dnsupdater
-[![Build Status](https://travis-ci.org/boris1993/dnsupdater.svg?branch=master)](https://travis-ci.org/boris1993/dnsupdater)
+[![Build Status](https://travis-ci.com/boris1993/dnsupdater.svg?branch=master)](https://travis-ci.com/boris1993/dnsupdater)
 ![GitHub](https://img.shields.io/github/license/boris1993/dnsupdater)
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/boris1993/dnsupdater)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/boris1993/dnsupdater)](https://github.com/boris1993/dnsupdater/releases/latest)
 ![Total download](https://img.shields.io/github/downloads/boris1993/dnsupdater/total.svg)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=boris1993_dnsupdater&metric=alert_status)](https://sonarcloud.io/dashboard?id=boris1993_dnsupdater)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fboris1993%2Fdnsupdater.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fboris1993%2Fdnsupdater?ref=badge_shield)
 
-Obtain your current external IP address and update to the specified DNS record on CloudFlare 
-
-Primarily built for MIPS 74kc since my router has a MIPS 74kc CPU
+This app allows you updating your DNS records with your current external IP address.
 
 ## How-to
-
-### Using pre-built binaries
 
 + Download the [latest release](https://github.com/boris1993/dnsupdater/releases/latest) for your target
 
@@ -21,67 +18,33 @@ Primarily built for MIPS 74kc since my router has a MIPS 74kc CPU
 
 + Finish your configuration in the `config.yaml`
 
-+ Upload `dnsupdater` and `config.yaml` to the device you want this app to run
++ Upload `dnsupdater` and `config.yaml` to the device you want this app to run. These 2 files must be under the same directory.
 
 + Set up a cron job like
 
 ```cron
-0 0,12 * * * /root/dnsupdater/dnsupdater > /var/log/update-dns.log 2>&1 &
-```
-
-### Build from source
-
-+ Install Go >= 1.12
-
-+ Get this repo
-
-```bash
-git clone https://github.com/boris1993/dnsupdater.git
-```
-
-+ Build for MIPS 74kc
-
-For Windows users:
- 
-```cmd
-install.bat
-```
-
-For *nix users:
-
-```bash
-make mips-softfloat
-```
-
-Then you will find the executable file under the `bin/dnsupdater-linux-mips-softfloat` directory. 
-
-+ Finish the configuration
-
-Rename `config.yaml.template` to `config.yaml` and finish your configuration. 
-
-+ Upload to your router
-
-Upload `dnsupdater` and `config.yaml` to your router.
-
-And don't forget to give it executable permission.
-
-+ Create a cron job
-
-```crontab
-0 0,12 * * * /root/dnsupdater/dnsupdater > /var/log/update-dns.log 2>&1 &
+0 0,12 * * * /home/yourname/dnsupdater/dnsupdater > /var/log/update-dns.log 2>&1 &
 ```
 
 ## Build for other platforms
 
-You can check for all preset targets by
+You can check for all preset targets by running the scripts in the `scripts` folder.
+
+For Windows users:
 
 ```cmd
 install.bat /?
 ```
 
+For *NIX users:
+
 ```bash
 make help
 ```
 
-Or you can also specify your own `GOARCH` and `GOOS` (and maybe `GOMIPS`) to build for your platform 
-as long as Go provides support to it.  
+Or you can specify your own `GOARCH` and `GOOS` (and maybe `GOMIPS`) with `go build` command 
+to build the executable for your platform as long as Go provides support to it.  
+
+## License
+
+Licensed under [MIT](LICENSE) license.

@@ -2,6 +2,7 @@
 
 SETLOCAL
 
+SET ROOT_DIR=%~dp0\..
 SET APP_NAME=dnsupdater
 SET PACKAGE_NAME=github.com/boris1993/%APP_NAME%
 
@@ -20,15 +21,15 @@ GOTO :check-arch
 :help
 ECHO Usage: install.bat TARGET
 ECHO TARGET could be windows-amd64, mips-softfloat, linux-amd64, darwin-amd64
-ECHO Default target is mips-softfloat
+ECHO Default target is linux-amd64
 GOTO exit
 
 :check-arch
 IF "%1"=="windows-amd64" GOTO build-windows-amd64
 IF "%1"=="linux-amd64" GOTO build-linux-amd64
 IF "%1"=="darwin-amd64" GOTO build-darwin-amd64
-IF "%1"=="mips-softfloat" GOTO mips-softfloat
-GOTO build-mips-softfloat
+IF "%1"=="mips-softfloat" GOTO build-mips-softfloat
+GOTO build-linux-amd64
 
 :build-windows-amd64
 SET GOARCH=amd64
@@ -54,14 +55,14 @@ GOTO do-build-mips
 :do-build-windows
 ECHO Building binary for Windows running under amd64
 
-IF NOT EXIST bin\%APP_NAME%-%GOOS%-%GOARCH% (
-    mkdir bin\%APP_NAME%-%GOOS%-%GOARCH%
+IF NOT EXIST %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH% (
+    mkdir %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%
 )
 
-go build -i -o bin\%APP_NAME%-%GOOS%-%GOARCH%\%APP_NAME%.exe
+go build -i -o %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%\%APP_NAME%.exe %ROOT_DIR%\cmd\dnsupdater.go
 
 ECHO Copying template config file to target directory...
-copy config.yaml.template bin\%APP_NAME%-%GOOS%-%GOARCH%
+copy %ROOT_DIR%\config.yaml.template %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH% > nul 2>&1
 
 IF errorlevel 1 GOTO error
 GOTO success
@@ -69,14 +70,14 @@ GOTO success
 :do-build-mips
 ECHO Building binary for Linux running under %GOARCH%-%GOMIPS%
 
-IF NOT EXIST bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS% (
-    mkdir bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS%
+IF NOT EXIST %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS% (
+    mkdir %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS%
 )
 
-go build -i -o bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS%\%APP_NAME%
+go build -i -o %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS%\%APP_NAME% %ROOT_DIR%\cmd\dnsupdater.go
 
 ECHO Copying template config file to target directory...
-copy config.yaml.template bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS%
+copy %ROOT_DIR%\config.yaml.template %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS% > nul 2>&1
 
 IF errorlevel 1 GOTO error
 GOTO success
@@ -84,14 +85,14 @@ GOTO success
 :do-build
 ECHO Building binary for %GOOS% running under %GOARCH%
 
-IF NOT EXIST bin\%APP_NAME%-%GOOS%-%GOARCH% (
-    mkdir bin\%APP_NAME%-%GOOS%-%GOARCH%
+IF NOT EXIST %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH% (
+    mkdir %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%
 )
 
-go build -i -o bin\%APP_NAME%-%GOOS%-%GOARCH%\%APP_NAME%
+go build -i -o %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%\%APP_NAME% %ROOT_DIR%\cmd\dnsupdater.go
 
 ECHO Copying template config file to target directory...
-copy config.yaml.template bin\%APP_NAME%-%GOOS%-%GOARCH%
+copy %ROOT_DIR%\config.yaml.template %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH% > nul 2>&1
 
 IF errorlevel 1 GOTO error
 GOTO success

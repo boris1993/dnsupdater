@@ -3,10 +3,10 @@ package main
 import (
 	"errors"
 	"flag"
-	"github.com/boris1993/dnsupdater/alidnsutil"
-	"github.com/boris1993/dnsupdater/cfutil"
-	"github.com/boris1993/dnsupdater/conf"
-	"github.com/boris1993/dnsupdater/constants"
+	"github.com/boris1993/dnsupdater/internal/configs"
+	"github.com/boris1993/dnsupdater/internal/constants"
+	"github.com/boris1993/dnsupdater/internal/helper/aliyun"
+	"github.com/boris1993/dnsupdater/internal/helper/cloudflare"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
@@ -16,7 +16,7 @@ import (
 func main() {
 	var err error
 
-	var config = conf.Get()
+	var config = configs.Get()
 
 	// Fetch the current external IP address.
 	ipAddress, err := getCurrentIPAddress(config)
@@ -26,26 +26,26 @@ func main() {
 	}
 
 	// Process CloudFlare records
-	err = cfutil.ProcessRecords(config, ipAddress)
+	err = cloudflare.ProcessRecords(config, ipAddress)
 
 	if err != nil {
 		log.Errorln(err)
 	}
 
-	alidnsutil.ProcessRecords(config, ipAddress)
+	aliyun.ProcessRecords(config, ipAddress)
 
 	os.Exit(0)
 }
 
 func init() {
-	flag.StringVar(&conf.Path, "config", "", "Path to the config file.")
-	flag.BoolVar(&conf.Debug, "debug", false, "Enable debug logging.")
+	flag.StringVar(&configs.Path, "config", "", "Path to the config file.")
+	flag.BoolVar(&configs.Debug, "debug", false, "Enable debug logging.")
 
 	flag.Parse()
 
 	log.SetFormatter(&log.TextFormatter{DisableLevelTruncation: true})
 
-	if conf.Debug == true {
+	if configs.Debug == true {
 		log.SetLevel(log.DebugLevel)
 	} else {
 		log.SetLevel(log.InfoLevel)
@@ -53,7 +53,7 @@ func init() {
 }
 
 // getCurrentIPAddress returns the external IP address for your network
-func getCurrentIPAddress(config conf.Config) (string, error) {
+func getCurrentIPAddress(config configs.Config) (string, error) {
 	if config.System.IPAddrAPI == "" {
 		return "", errors.New(constants.ErrIPAddressFetchingAPIEmpty)
 	}

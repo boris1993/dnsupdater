@@ -1,8 +1,8 @@
 // Package conf provides all models needed by this programme.
-package conf
+package configs
 
 import (
-	"github.com/boris1993/dnsupdater/constants"
+	"github.com/boris1993/dnsupdater/internal/constants"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"

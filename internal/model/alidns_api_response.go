@@ -1,4 +1,4 @@
-package alidnsmodel
+package model
 
 type commonResponse struct {
 	RequestID string `json:"RequestId"`
