@@ -10,9 +10,9 @@ import (
 	"strings"
 )
 
-// ProcessRecords takes the configuration and the current IP address
+// ProcessRecords takes the configuration as well as the current IP address
 // then check and update each DNS record in Aliyun DNS
-func ProcessRecords(config *conf.Config, currentIPAddress string) {
+func ProcessRecords(config conf.Config, currentIPAddress string) {
 	log.Println(len(config.AliDNSRecords), constants.MsgAliDNSRecordsFoundSuffix)
 
 	for _, aliDNSRecord := range config.AliDNSRecords {

@@ -19,20 +19,20 @@ func main() {
 	var config = conf.Get()
 
 	// Fetch the current external IP address.
-	currentIPAddress, err := getCurrentIPAddress(config)
+	ipAddress, err := getCurrentIPAddress(config)
 
 	if err != nil {
 		log.Fatalln(err)
 	}
 
 	// Process CloudFlare records
-	err = cfutil.ProcessRecords(config, currentIPAddress)
+	err = cfutil.ProcessRecords(config, ipAddress)
 
 	if err != nil {
 		log.Errorln(err)
 	}
 
-	alidnsutil.ProcessRecords(config, currentIPAddress)
+	alidnsutil.ProcessRecords(config, ipAddress)
 
 	os.Exit(0)
 }
@@ -53,13 +53,14 @@ func init() {
 }
 
 // getCurrentIPAddress returns the external IP address for your network
-func getCurrentIPAddress(config *conf.Config) (string, error) {
+func getCurrentIPAddress(config conf.Config) (string, error) {
 	if config.System.IPAddrAPI == "" {
 		return "", errors.New(constants.ErrIPAddressFetchingAPIEmpty)
 	}
 
 	log.Println(constants.MsgCheckingCurrentIPAddr)
 
+	//region fetch your IPv4 address
 	resp, err := http.Get(config.System.IPAddrAPI)
 
 	if err != nil {
@@ -83,6 +84,7 @@ func getCurrentIPAddress(config *conf.Config) (string, error) {
 
 	// Body only contains the IP address
 	ipAddress := string(body)
+	//endregion
 
 	log.Println(constants.MsgHeaderCurrentIPAddr, ipAddress)
 

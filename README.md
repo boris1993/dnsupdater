@@ -1,7 +1,9 @@
 # dnsupdater
-|master| dev |
-|:----:|:---:|
-|[![Build Status](https://travis-ci.org/boris1993/dnsupdater.svg?branch=master)](https://travis-ci.org/boris1993/dnsupdater)|[![Build Status](https://travis-ci.org/boris1993/dnsupdater.svg?branch=dev)](https://travis-ci.org/boris1993/dnsupdater)|
+[![Build Status](https://travis-ci.org/boris1993/dnsupdater.svg?branch=master)](https://travis-ci.org/boris1993/dnsupdater)
+![GitHub](https://img.shields.io/github/license/boris1993/dnsupdater)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/boris1993/dnsupdater)
+![Total download](https://img.shields.io/github/downloads/boris1993/dnsupdater/total.svg)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=boris1993_dnsupdater&metric=alert_status)](https://sonarcloud.io/dashboard?id=boris1993_dnsupdater)
 
 Obtain your current external IP address and update to the specified DNS record on CloudFlare 
 
