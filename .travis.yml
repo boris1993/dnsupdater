@@ -8,8 +8,7 @@ addons:
     token:
       secure: "MWUIXJUtxfUrRTKXtXH69ltmkZYd9cYmVSmDXM3it0h//KRA1qkRjB4FUyASgT8DLywQxtIj1VL27NM2izJj0A2Mi9mY5HnvidDY+EYoMoOdV32Hpdg2C4JAGcdmpt0iftjZ/YIWTdlPUPfhjbawb58Z1so+rt8rxgySKSfokaVt64uiawzud1uIsuXnG6M3KYgxhhoLe6cBOva4b1ERbDhFcEquIpnCv3tGEhh7QrCEddr1pRXBXNT2ZccgE1et3j66VrxXmSeD4R15iuk1ozJaY8T8FOLMS8+Y+eVYtdLAFCAXZl1jKEMAdK6HVGW2kt9FwrlGkDqlqutE809ahteAYLmMwHspmB75J24jC+pnUub8ZNp2LwrcfUa2+TmTsCGs7A7FVFGcVYcznuRdDpgSIMN5CbLBxZvClwaw3raDZaqRpH/JlyflFu2dMJVcm4waP1gd6L7y/85aR6UjQC3iKsFTMlAvRfTT/zffygSfaZUaMQntJWy+c9QQR0rrBDKC64bzpzZ/8Q308N8/oOlH/dpawVMAwR6Icdc7gqaVI/dG9rq0Q7CSz25gLShpATnlqSQDA32/hLY3Ic0zAeQZ6x4rp1goOvLW+JxunA5fn6AxTZLkmGddFuxuu27zcnsKrBqlS+6GDp0CkcGXIMgojg0hK8Gp0lvvtnNzddc="
 env:
-  - GO111MODULE=on
-  - ROOT_DIR=$(pwd)
+  - GO111MODULE=on ROOT_DIR=$(TRAVIS_BUILD_DIR)
 script:
 - make -f scripts/Makefile
 - sonar-scanner
@@ -34,7 +33,7 @@ before_deploy:
 - git config --local user.email "boris1993@126.com"
 deploy:
 - provider: releases
-  api_key:
+  api_token:
     secure: jS9XfKFAvRyjUGFiIg6GQ9KuhvWiBbuNzeVkUshPc1i555B/6nUuSnSIw9iGR2wF9ltetA47JausPG7fTrudB1c0dPpLFcM98vHnEa+L8IsdlcIIfONPLJ+bkVqDmHTyLxeAOu6yXB1FXmDMqd+/l0ND5Chix93tJ/DzPxCgm6sUocRXdBEhbKT6FwzSK2CgxkG71o6/HLiXjJ8+l3HVj7MhVuNnzSTU/NGaYvWQzdsb84EjtGmKGD3vr8tMQYjaVRwZyYUkdR+qSUgMOZQPs0ygvI4K2nvZGX4qpgVNbvaPwy6e3QZtyVOHzVqW0aGy7G1KETbcwYuEtuNwviH4cwqOcMYJiALLk3KaulBkjBbfHT5/ajSK/m9hrZ29Bwsdyk8p6zMF+hZqUGeoOV+5+bnr/McJV4jwimg62tXkDH752eJFP0vWAf0DS7vGJQ9sOduyWUyvyfGNss2MI3QcBYy0Mn3iCwI/rFSsoXjoIjVp8CNhtFgw6sY/Ctvq7h4/GiwkxTtuYioHDZeBFWe+8gRSf3W0t6VuzKJgmUN+u4SMes/CTuZm/vkWtG6ou8MhkSSSbMmg73MdumXjrIBhM7Bauk6a3PVpUgk8u8M+e0kOwnCtgAN6gsdvHr4qQVOqcL5KD/NeFAo07IaZsW6odHkZ8pZlEtoYMAkxXkZLNRQ=
   skip_cleanup: true
   file:
@@ -45,4 +44,4 @@ deploy:
   on:
     repo: boris1993/dnsupdater
     tags: true
-    on: $TRAVIS_TAG =~ "^v[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+$"
+    condition: $TRAVIS_TAG =~ "^v[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+$"
