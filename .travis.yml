@@ -1,6 +1,8 @@
 language: go
 go:
 - 1.15.x
+git:
+  depth: false
 install: true
 addons:
   sonarcloud:
