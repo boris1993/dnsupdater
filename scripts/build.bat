@@ -59,7 +59,7 @@ IF NOT EXIST %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH% (
     mkdir %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%
 )
 
-go build -i -o %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%\%APP_NAME%.exe %ROOT_DIR%\cmd\dnsupdater.go
+go build -i -o %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%\%APP_NAME%.exe %ROOT_DIR%\cmd\dnsupdater\main.go
 
 ECHO Copying template config file to target directory...
 copy %ROOT_DIR%\configs\config.yaml.template %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH% > nul 2>&1
@@ -74,7 +74,7 @@ IF NOT EXIST %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS% (
     mkdir %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS%
 )
 
-go build -i -o %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS%\%APP_NAME% %ROOT_DIR%\cmd\dnsupdater.go
+go build -i -o %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS%\%APP_NAME% %ROOT_DIR%\cmd\dnsupdater\main.go
 
 ECHO Copying template config file to target directory...
 copy %ROOT_DIR%\configs\config.yaml.template %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS% > nul 2>&1
@@ -89,7 +89,7 @@ IF NOT EXIST %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH% (
     mkdir %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%
 )
 
-go build -i -o %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%\%APP_NAME% %ROOT_DIR%\cmd\dnsupdater.go
+go build -i -o %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%\%APP_NAME% %ROOT_DIR%\cmd\dnsupdater\main.go
 
 ECHO Copying template config file to target directory...
 copy %ROOT_DIR%\configs\config.yaml.template %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH% > nul 2>&1
