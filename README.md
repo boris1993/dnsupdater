@@ -33,7 +33,7 @@ You can check for all preset targets by running the scripts in the `scripts` fol
 For Windows users:
 
 ```cmd
-install.bat /?
+build.bat /?
 ```
 
 For *NIX users:

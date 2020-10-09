@@ -10,8 +10,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
-
-	"github.com/boris1993/dnsupdater/internal/model"
 )
 
 // ProcessRecords takes the configuration as well as the current IP address,
@@ -128,7 +126,7 @@ func getCFDnsRecordIpAddress(cloudFlareRecord configs.CloudFlare) (string, strin
 		return "", "", err
 	}
 
-	dnsRecord := model.CfDnsRecord{}
+	dnsRecord := CfDnsRecord{}
 
 	log.Debug("Response: \n" + string(body))
 
@@ -165,7 +163,7 @@ func updateCFDNSRecord(id string, address string, cloudFlareRecord configs.Cloud
 
 	client := &http.Client{}
 
-	updateRecordData := model.UpdateRecordData{}
+	updateRecordData := UpdateRecordData{}
 	updateRecordData.RecordType = "A"
 	updateRecordData.Name = cloudFlareRecord.DomainName
 	updateRecordData.Content = address
@@ -208,7 +206,7 @@ func updateCFDNSRecord(id string, address string, cloudFlareRecord configs.Cloud
 		return false, err
 	}
 
-	dnsRecord := model.UpdateRecordResult{}
+	dnsRecord := UpdateRecordResult{}
 
 	log.Debug("Response: \n" + string(body))
 

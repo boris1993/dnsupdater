@@ -1,4 +1,4 @@
-package model
+package aliyun
 
 type commonResponse struct {
 	RequestID string `json:"RequestId"`

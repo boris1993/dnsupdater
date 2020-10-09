@@ -1,5 +1,5 @@
 // Package model provides all models needed by this programme.
-package model
+package cloudflare
 
 // CfDnsRecord is the structure of the CloudFlare DNS query.
 //
