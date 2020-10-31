@@ -1,10 +1,9 @@
-// Package model provides all models needed by this programme.
 package cloudflare
 
-// CfDnsRecord is the structure of the CloudFlare DNS query.
+// CfAPIResponse the response format of CloudFlare API
 //
-// See https://api.cloudflare.com/#dns-records-for-a-zone-dns-record-details
-type CfDnsRecord struct {
+// See https://api.cloudflare.com/#getting-started-responses
+type CfAPIResponse struct {
 	Success    bool                  `json:"success"`
 	Errors     []errorMessage        `json:"errors"`
 	Messages   []string              `json:"messages"`
@@ -17,7 +16,7 @@ type errorMessage struct {
 	Message string `json:"message"`
 }
 
-// cfDnsRecordResult is the structure of the results part in CfDnsRecord.
+// cfDnsRecordResult is the structure of the results part in CfAPIResponse.
 //
 // See https://api.cloudflare.com/#dns-records-for-a-zone-dns-record-details
 type cfDnsRecordResult struct {

@@ -102,14 +102,32 @@ func getCFDnsRecordIpAddress(cloudFlareRecord configs.CloudFlare) (string, strin
 	log.Println(constants.MsgHeaderFetchingIPOfDomain, cloudFlareRecord.DomainName)
 
 	resp, err := client.Do(req)
-
 	if err != nil {
 		return "", "", err
 	}
 
-	if resp.StatusCode != http.StatusOK {
-		// TODO Maybe return the corresponding error message instead of the error code
-		return "", "", errors.New(resp.Status)
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", "", err
+	}
+
+	cfAPIResponse := CfAPIResponse{}
+	err = json.Unmarshal(body, &cfAPIResponse)
+	if err != nil {
+		return "", "", err
+	}
+
+	if resp.StatusCode != http.StatusOK || !cfAPIResponse.Success {
+		errorMessages := ""
+		for key := range cfAPIResponse.Errors {
+			errorMessages += cfAPIResponse.Errors[key].Message
+
+			if key != len(cfAPIResponse.Errors)-1 {
+				errorMessages += "; "
+			}
+		}
+
+		return "", "", errors.New(errorMessages)
 	}
 
 	defer func() {
@@ -120,32 +138,16 @@ func getCFDnsRecordIpAddress(cloudFlareRecord configs.CloudFlare) (string, strin
 		}
 	}()
 
-	body, err := ioutil.ReadAll(resp.Body)
-
-	if err != nil {
-		return "", "", err
-	}
-
-	dnsRecord := CfDnsRecord{}
-
-	log.Debug("Response: \n" + string(body))
-
-	err = json.Unmarshal(body, &dnsRecord)
-
-	if err != nil {
-		return "", "", err
-	}
-
-	if len(dnsRecord.Result) == 0 {
+	if len(cfAPIResponse.Result) == 0 {
 		return "", "", errors.New(constants.ErrNoDNSRecordFoundPrefix + cloudFlareRecord.DomainName)
 	}
 
-	if !dnsRecord.Success {
+	if !cfAPIResponse.Success {
 		return "", "", errors.New(constants.ErrMsgHeaderFetchDomainInfoFailed + cloudFlareRecord.DomainName)
 	}
 
-	id := dnsRecord.Result[0].ID
-	ipAddrInDns := dnsRecord.Result[0].Content
+	id := cfAPIResponse.Result[0].ID
+	ipAddrInDns := cfAPIResponse.Result[0].Content
 
 	log.Printf(constants.MsgFormatDNSFetchResult, cloudFlareRecord.DomainName, ipAddrInDns)
 
