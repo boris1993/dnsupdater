@@ -20,19 +20,20 @@ func main() {
 
 	// Fetch the current external IP address.
 	ipAddress, err := getCurrentIPAddress(config)
-
 	if err != nil {
 		log.Fatalln(err)
 	}
 
 	// Process CloudFlare records
 	err = cloudflare.ProcessRecords(config, ipAddress)
-
 	if err != nil {
 		log.Errorln(err)
 	}
 
-	aliyun.ProcessRecords(config, ipAddress)
+	err = aliyun.ProcessRecords(config, ipAddress)
+	if err != nil {
+		log.Errorln(err)
+	}
 
 	os.Exit(0)
 }
@@ -62,7 +63,6 @@ func getCurrentIPAddress(config configs.Config) (string, error) {
 
 	//region fetch your IPv4 address
 	resp, err := http.Get(config.System.IPAddrAPI)
-
 	if err != nil {
 		return "", err
 	}
@@ -77,7 +77,6 @@ func getCurrentIPAddress(config configs.Config) (string, error) {
 	}()
 
 	body, err := ioutil.ReadAll(resp.Body)
-
 	if err != nil {
 		return "", err
 	}

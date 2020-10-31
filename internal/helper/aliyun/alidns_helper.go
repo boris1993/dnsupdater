@@ -13,7 +13,11 @@ import (
 
 // ProcessRecords takes the configuration as well as the current IP address
 // then check and update each DNS record in Aliyun DNS
-func ProcessRecords(config configs.Config, currentIPAddress string) {
+func ProcessRecords(config configs.Config, currentIPAddress string) error {
+	if config.System.AliyunAPIEndpoint == "" {
+		return errors.New(constants.ErrAliyunAPIAddressEmpty)
+	}
+
 	log.Println(len(config.AliDNSRecords), constants.MsgAliDNSRecordsFoundSuffix)
 
 	for _, aliDNSRecord := range config.AliDNSRecords {
@@ -40,11 +44,11 @@ func ProcessRecords(config configs.Config, currentIPAddress string) {
 			continue
 		}
 
-		// RR is the 2nd level domain
 		domainNameParts := strings.Split(aliDNSRecord.DomainName, ".")
-		RR := strings.Join(domainNameParts[:len(domainNameParts)-2], ".")
+		// Remove the TLD and the domain, what's rest are the host record
+		hostRecord := strings.Join(domainNameParts[:len(domainNameParts)-2], ".")
 
-		status, err := updateAliDNSRecord(recordId, RR, currentIPAddress, aliDNSRecord)
+		status, err := updateAliDNSRecord(recordId, hostRecord, currentIPAddress, aliDNSRecord)
 
 		if err != nil {
 			log.Errorln(err)
@@ -57,6 +61,8 @@ func ProcessRecords(config configs.Config, currentIPAddress string) {
 			log.Println(constants.MsgHeaderDNSRecordUpdateSuccessful, aliDNSRecord.DomainName)
 		}
 	}
+
+	return nil
 }
 
 // getDomainRecordID fetches the information of the specified record.
@@ -101,6 +107,13 @@ func getDomainRecordID(aliDNSConfigRecord configs.AliDNS) (recordId string, reco
 	}
 
 	body, err := ioutil.ReadAll(response.Body)
+	defer func() {
+		err := response.Body.Close()
+
+		if err != nil {
+			log.Errorln(constants.ErrCloseHTTPConnectionFail, err)
+		}
+	}()
 	if err != nil {
 		return "", "", err
 	}
@@ -114,14 +127,6 @@ func getDomainRecordID(aliDNSConfigRecord configs.AliDNS) (recordId string, reco
 
 		return "", "", errors.New(aliDNSErrorResponse.Message)
 	}
-
-	defer func() {
-		err := response.Body.Close()
-
-		if err != nil {
-			log.Errorln(constants.ErrCloseHTTPConnectionFail, err)
-		}
-	}()
 
 	describeDomainRecordsResponse := DescribeDomainRecordsResponse{}
 	err = json.Unmarshal(body, &describeDomainRecordsResponse)
@@ -182,6 +187,13 @@ func updateAliDNSRecord(recordId string, RR string, currentIPAddress string, ali
 	}
 
 	body, err := ioutil.ReadAll(response.Body)
+	defer func() {
+		err := response.Body.Close()
+
+		if err != nil {
+			log.Errorln(constants.ErrCloseHTTPConnectionFail, err)
+		}
+	}()
 	if err != nil {
 		return false, err
 	}

@@ -15,7 +15,6 @@ import (
 // ProcessRecords takes the configuration as well as the current IP address,
 // then check and update each DNS record in CloudFlare
 func ProcessRecords(config configs.Config, currentAddress string) error {
-
 	if config.System.CloudFlareAPIEndpoint == "" {
 		return errors.New(constants.ErrCloudFlareAPIAddressEmpty)
 	}
