@@ -107,7 +107,7 @@ func getCFDnsRecordIpAddress(cloudFlareRecord configs.CloudFlare) (string, strin
 		return "", "", err
 	}
 
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != http.StatusOK {
 		// TODO Maybe return the corresponding error message instead of the error code
 		return "", "", errors.New(resp.Status)
 	}
@@ -130,7 +130,7 @@ func getCFDnsRecordIpAddress(cloudFlareRecord configs.CloudFlare) (string, strin
 
 	log.Debug("Response: \n" + string(body))
 
-	err = json.Unmarshal([]byte(string(body)), &dnsRecord)
+	err = json.Unmarshal(body, &dnsRecord)
 
 	if err != nil {
 		return "", "", err

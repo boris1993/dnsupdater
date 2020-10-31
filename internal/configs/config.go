@@ -29,6 +29,7 @@ type Config struct {
 type System struct {
 	IPAddrAPI             string `yaml:"IPAddrAPI"`
 	CloudFlareAPIEndpoint string `yaml:"CloudFlareAPIEndpoint"`
+	AliyunAPIEndpoint     string `yaml:"AliyunAPIEndpoint"`
 }
 
 // CloudFlare describes the CloudFlare specialised properties in Config.yaml
