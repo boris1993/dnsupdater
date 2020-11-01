@@ -17,10 +17,10 @@ type DescribeDomainRecordsResponse struct {
 // domainRecords describes how a DNS record is returned.
 // See document: https://help.aliyun.com/document_detail/29799.html?spm=a2c4g.11186623.2.18.37a25eb4Fu6boQ
 type domainRecords struct {
-	Record []record `json:"Record"`
+	Record []AliDNSRecord `json:"Record"`
 }
 
-type record struct {
+type AliDNSRecord struct {
 	DomainName string
 	RecordID   string `json:"RecordId"`
 	RR         string

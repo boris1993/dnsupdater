@@ -1,7 +1,6 @@
-package test
+package aliyun
 
 import (
-	"github.com/boris1993/dnsupdater/internal/helper/aliyun"
 	"net/http"
 	"testing"
 )
@@ -22,10 +21,10 @@ func TestSignRequest(t *testing.T) {
 	queryParams["Version"] = []string{"2015-01-09"}
 	queryParams["Timestamp"] = []string{"2016-03-24T16:41:54Z"}
 
-	signature := aliyun.GenerateAliDNSRequestSignature(http.MethodGet, accessKeySecret, queryParams)
+	signature := generateAliDNSRequestSignature(http.MethodGet, accessKeySecret, queryParams)
 
 	if signature != expectedSignature {
-		t.Errorf("GenerateAliDNSRequestSignature expected = %s, got = %s", expectedSignature, signature)
+		t.Errorf("generateAliDNSRequestSignature expected = %s, got = %s", expectedSignature, signature)
 	}
 }
 
@@ -38,7 +37,7 @@ func TestBuildRequest(t *testing.T) {
 	queryParams := make(map[string]string)
 	queryParams["DomainName"] = "example.com"
 
-	_, err := aliyun.BuildAliDNSRequest(apiEndpoint, accessKeyId, accessKeySecret, action, queryParams)
+	_, err := BuildAliDNSRequest(apiEndpoint, accessKeyId, accessKeySecret, action, queryParams)
 
 	if err != nil {
 		t.Errorf("Error occurred when testing BuildAliDNSRequest. Message=%s", err)

@@ -13,7 +13,12 @@ import (
 
 // ProcessRecords takes the configuration as well as the current IP address
 // then check and update each DNS record in Aliyun DNS
-func ProcessRecords(config configs.Config, currentIPAddress string) error {
+func ProcessRecords(currentIPAddress string) error {
+	config, err := configs.Get()
+	if err != nil {
+		return err
+	}
+
 	if config.System.AliyunAPIEndpoint == "" {
 		return errors.New(constants.ErrAliyunAPIAddressEmpty)
 	}
@@ -33,7 +38,6 @@ func ProcessRecords(config configs.Config, currentIPAddress string) error {
 		log.Println(constants.MsgHeaderDomainProcessing, aliDNSRecord.DomainName)
 
 		recordId, recordIP, err := getDomainRecordID(aliDNSRecord)
-
 		if err != nil {
 			log.Errorln(err)
 			continue
@@ -49,7 +53,6 @@ func ProcessRecords(config configs.Config, currentIPAddress string) error {
 		hostRecord := strings.Join(domainNameParts[:len(domainNameParts)-2], ".")
 
 		status, err := updateAliDNSRecord(recordId, hostRecord, currentIPAddress, aliDNSRecord)
-
 		if err != nil {
 			log.Errorln(err)
 			continue
@@ -69,6 +72,11 @@ func ProcessRecords(config configs.Config, currentIPAddress string) error {
 //
 // See document: https://help.aliyun.com/document_detail/29776.html?spm=a2c4g.11186623.2.37.1de5425696HU8m#h2-u8FD4u56DEu53C2u65703
 func getDomainRecordID(aliDNSConfigRecord configs.AliDNS) (recordId string, recordAddress string, err error) {
+	config, err := configs.Get()
+	if err != nil {
+		return "", "", err
+	}
+
 	domainNameParts := strings.Split(aliDNSConfigRecord.DomainName, ".")
 
 	tld := domainNameParts[len(domainNameParts)-1]
@@ -76,27 +84,17 @@ func getDomainRecordID(aliDNSConfigRecord configs.AliDNS) (recordId string, reco
 	hostRecord := strings.Join(domainNameParts[:len(domainNameParts)-2], ".")
 
 	param := make(map[string]string)
-	param["DomainName"] = strings.Join([]string{domainName, tld}, ".")
-	param["KeyWord"] = hostRecord
-	param["SearchMode"] = "EXACT"
+	param[QueryParamDomainName] = strings.Join([]string{domainName, tld}, ".")
+	param[QueryParamKeyWord] = hostRecord
+	param[QueryParamSearchMode] = SearchModeExact
 
 	request, err := BuildAliDNSRequest(
-		configs.Get().System.AliyunAPIEndpoint,
+		config.System.AliyunAPIEndpoint,
 		aliDNSConfigRecord.AccessKeyID,
 		aliDNSConfigRecord.AccessKeySecret,
-		"DescribeDomainRecords",
+		ActionDescribeDomainRecords,
 		param,
 	)
-
-	if log.GetLevel() == log.DebugLevel {
-		log.Debugln()
-		log.Debugln("==========REQUEST FOR GETTING RECORD ID==========")
-		for key, value := range param {
-			log.Debugf("%s = %s", key, value)
-		}
-		log.Debugln("==========REQUEST FOR GETTING RECORD ID==========")
-		log.Debugln()
-	}
 
 	log.Println(constants.MsgHeaderFetchingIPOfDomain, aliDNSConfigRecord.DomainName)
 
@@ -134,12 +132,8 @@ func getDomainRecordID(aliDNSConfigRecord configs.AliDNS) (recordId string, reco
 		return "", "", err
 	}
 
-	switch {
-	case len(describeDomainRecordsResponse.DomainRecords.Record) == 0:
+	if len(describeDomainRecordsResponse.DomainRecords.Record) == 0 {
 		err := errors.New(constants.ErrNoDNSRecordFoundPrefix + aliDNSConfigRecord.DomainName)
-		return "", "", err
-	case len(describeDomainRecordsResponse.DomainRecords.Record) != 1:
-		err := errors.New(constants.ErrMultipleDNSRecordsFound)
 		return "", "", err
 	}
 
@@ -154,46 +148,29 @@ func getDomainRecordID(aliDNSConfigRecord configs.AliDNS) (recordId string, reco
 //
 // See document: https://help.aliyun.com/document_detail/29774.html?spm=a2c4g.11186623.2.35.1de5425696HU8m
 func updateAliDNSRecord(recordId string, RR string, currentIPAddress string, aliDNSConfigRecord configs.AliDNS) (bool, error) {
+	config, err := configs.Get()
+	if err != nil {
+		return false, err
+	}
+
 	param := make(map[string]string)
-	param["RecordId"] = recordId
-	param["RR"] = RR
-	param["Type"] = "A"
-	param["Value"] = currentIPAddress
+	param[QueryParamRecordId] = recordId
+	param[QueryParamRR] = RR
+	param[QueryParamType] = "A"
+	param[QueryParamValue] = currentIPAddress
 
 	request, err := BuildAliDNSRequest(
-		configs.Get().System.AliyunAPIEndpoint,
+		config.System.AliyunAPIEndpoint,
 		aliDNSConfigRecord.AccessKeyID,
 		aliDNSConfigRecord.AccessKeySecret,
-		"UpdateDomainRecord",
+		ActionUpdateDomainRecord,
 		param,
 	)
-
-	if log.GetLevel() == log.DebugLevel {
-		log.Debugln()
-		log.Debugln("==========REQUEST FOR UPDATING RECORD ID==========")
-		for key, value := range param {
-			log.Debugf("%s = %s", key, value)
-		}
-		log.Debugln("==========REQUEST FOR UPDATING RECORD ID==========")
-		log.Debugln()
-	}
 
 	log.Printf(constants.MsgFormatUpdatingDNS, recordId, currentIPAddress)
 
 	httpClient := &http.Client{}
 	response, err := httpClient.Do(request)
-	if err != nil {
-		return false, err
-	}
-
-	body, err := ioutil.ReadAll(response.Body)
-	defer func() {
-		err := response.Body.Close()
-
-		if err != nil {
-			log.Errorln(constants.ErrCloseHTTPConnectionFail, err)
-		}
-	}()
 	if err != nil {
 		return false, err
 	}
@@ -204,11 +181,24 @@ func updateAliDNSRecord(recordId string, RR string, currentIPAddress string, ali
 	case http.StatusOK:
 		return true, nil
 	default:
+		body, err := ioutil.ReadAll(response.Body)
+		defer func() {
+			err := response.Body.Close()
+
+			if err != nil {
+				log.Errorln(constants.ErrCloseHTTPConnectionFail, err)
+			}
+		}()
+		if err != nil {
+			return false, err
+		}
+
 		aliDNSErrorResponse := AliDNSErrorResponse{}
 		err = json.Unmarshal(body, &aliDNSErrorResponse)
 		if err != nil {
 			return false, err
 		}
+
 		return false, errors.New(aliDNSErrorResponse.Message)
 	}
 }

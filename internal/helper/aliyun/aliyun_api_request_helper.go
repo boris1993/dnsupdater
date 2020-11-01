@@ -44,17 +44,17 @@ func BuildAliDNSRequest(
 	}
 	//endregion
 
-	signature := GenerateAliDNSRequestSignature(request.Method, accessKeySecret, queryParams)
+	signature := generateAliDNSRequestSignature(request.Method, accessKeySecret, queryParams)
 	queryParams.Add("Signature", signature)
 
 	request.URL.RawQuery = queryParams.Encode()
 	return request, nil
 }
 
-//GenerateAliDNSRequestSignature returns the signature of the request.
+//generateAliDNSRequestSignature returns the signature of the request.
 //
 //See https://help.aliyun.com/document_detail/29747.html?spm=a2c4g.11186623.6.632.53b98dcazC573U for more information.
-func GenerateAliDNSRequestSignature(httpMethod string, accessSecret string, queryParams map[string][]string) string {
+func generateAliDNSRequestSignature(httpMethod string, accessSecret string, queryParams map[string][]string) string {
 	// The keys in the query parameter string must be sorted alphabetically and is case-sensitive.
 	keys := make([]string, 0, len(queryParams))
 	for key := range queryParams {
