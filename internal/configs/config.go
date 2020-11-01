@@ -11,12 +11,13 @@ import (
 	"sync"
 )
 
-var once sync.Once
+var once = new(sync.Once)
 
 var Debug bool
 
 var Path string
 var conf Config
+var errorInInitConfig error
 
 // Config describes the top-level properties in Config.yaml
 type Config struct {
@@ -48,24 +49,29 @@ type AliDNS struct {
 	DomainName      string `yaml:"DomainName"`
 }
 
-func Get() Config {
+func Get() (*Config, error) {
 	once.Do(func() {
 		err := initConfig()
 
 		if err != nil {
-			log.Fatalln(err)
+			log.Errorln(err)
+			errorInInitConfig = err
 		}
 	})
-	return conf
+
+	if errorInInitConfig != nil {
+		return &conf, errorInInitConfig
+	}
+
+	return &conf, nil
 }
 
 // initConfig reads the Config.yaml and saves the properties in a variable.
 func initConfig() error {
 	if Path == "" {
 		absPath, err := filepath.Abs(filepath.Dir(os.Args[0]))
-
 		if err != nil {
-			log.Fatalln(err)
+			return err
 		}
 
 		Path = filepath.Join(absPath, "config.yaml")

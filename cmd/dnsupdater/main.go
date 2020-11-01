@@ -16,21 +16,24 @@ import (
 func main() {
 	var err error
 
-	var config = configs.Get()
+	config, err := configs.Get()
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	// Fetch the current external IP address.
-	ipAddress, err := getCurrentIPAddress(config)
+	currentIPAddress, err := getCurrentIPAddress(*config)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
 	// Process CloudFlare records
-	err = cloudflare.ProcessRecords(config, ipAddress)
+	err = cloudflare.ProcessRecords(currentIPAddress)
 	if err != nil {
 		log.Errorln(err)
 	}
 
-	err = aliyun.ProcessRecords(config, ipAddress)
+	err = aliyun.ProcessRecords(currentIPAddress)
 	if err != nil {
 		log.Errorln(err)
 	}
