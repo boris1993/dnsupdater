@@ -1,6 +1,8 @@
 language: go
 go:
-- 1.15.x
+  - 1.15.x
+git:
+  depth: false
 install: true
 addons:
   sonarcloud:
@@ -10,8 +12,8 @@ addons:
 env:
   - GO111MODULE=on
 script:
-- make -f scripts/Makefile
-- sonar-scanner
+  - make -f scripts/Makefile test
+  - sonar-scanner
 cache:
   directories:
     - "$HOME/.sonar/cache"
@@ -19,28 +21,29 @@ notifications:
   email: false
 branches:
   only:
-  - master
-  - dev
-  - "/^v\\d+\\.\\d+(\\.\\d+)?(-\\S*)?$/"
+    - master
+    - dev
+    - "/^v\\d+\\.\\d+(\\.\\d+)?(-\\S*)?$/"
 before_deploy:
-- pushd bin
-- zip -r dnsupdater-windows-amd64.zip dnsupdater-windows-amd64
-- tar cvzf dnsupdater-darwin-amd64.tar.gz dnsupdater-darwin-amd64
-- tar cvzf dnsupdater-linux-amd64.tar.gz dnsupdater-linux-amd64
-- tar cvzf dnsupdater-linux-mips-softfloat.tar.gz dnsupdater-linux-mips-softfloat
-- popd
-- git config --local user.name "Boris Zhao"
-- git config --local user.email "boris1993@126.com"
+  - make -f scripts/Makefile
+  - cd bin
+  - zip -r dnsupdater-windows-amd64.zip dnsupdater-windows-amd64
+  - tar cvzf dnsupdater-darwin-amd64.tar.gz dnsupdater-darwin-amd64
+  - tar cvzf dnsupdater-linux-amd64.tar.gz dnsupdater-linux-amd64
+  - tar cvzf dnsupdater-linux-mips-softfloat.tar.gz dnsupdater-linux-mips-softfloat
+  - cd ..
+  - git config --local user.name "Boris Zhao"
+  - git config --local user.email "boris1993@126.com"
 deploy:
-- provider: releases
-  token:
-    secure: jS9XfKFAvRyjUGFiIg6GQ9KuhvWiBbuNzeVkUshPc1i555B/6nUuSnSIw9iGR2wF9ltetA47JausPG7fTrudB1c0dPpLFcM98vHnEa+L8IsdlcIIfONPLJ+bkVqDmHTyLxeAOu6yXB1FXmDMqd+/l0ND5Chix93tJ/DzPxCgm6sUocRXdBEhbKT6FwzSK2CgxkG71o6/HLiXjJ8+l3HVj7MhVuNnzSTU/NGaYvWQzdsb84EjtGmKGD3vr8tMQYjaVRwZyYUkdR+qSUgMOZQPs0ygvI4K2nvZGX4qpgVNbvaPwy6e3QZtyVOHzVqW0aGy7G1KETbcwYuEtuNwviH4cwqOcMYJiALLk3KaulBkjBbfHT5/ajSK/m9hrZ29Bwsdyk8p6zMF+hZqUGeoOV+5+bnr/McJV4jwimg62tXkDH752eJFP0vWAf0DS7vGJQ9sOduyWUyvyfGNss2MI3QcBYy0Mn3iCwI/rFSsoXjoIjVp8CNhtFgw6sY/Ctvq7h4/GiwkxTtuYioHDZeBFWe+8gRSf3W0t6VuzKJgmUN+u4SMes/CTuZm/vkWtG6ou8MhkSSSbMmg73MdumXjrIBhM7Bauk6a3PVpUgk8u8M+e0kOwnCtgAN6gsdvHr4qQVOqcL5KD/NeFAo07IaZsW6odHkZ8pZlEtoYMAkxXkZLNRQ=
-  file:
-  - bin/dnsupdater-windows-amd64.zip
-  - bin/dnsupdater-darwin-amd64.tar.gz
-  - bin/dnsupdater-linux-amd64.tar.gz
-  - bin/dnsupdater-linux-mips-softfloat.tar.gz
-  on:
-    repo: boris1993/dnsupdater
-    tags: true
-    condition: $TRAVIS_TAG =~ "^v[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+$"
+  - provider: releases
+    token:
+      secure: jS9XfKFAvRyjUGFiIg6GQ9KuhvWiBbuNzeVkUshPc1i555B/6nUuSnSIw9iGR2wF9ltetA47JausPG7fTrudB1c0dPpLFcM98vHnEa+L8IsdlcIIfONPLJ+bkVqDmHTyLxeAOu6yXB1FXmDMqd+/l0ND5Chix93tJ/DzPxCgm6sUocRXdBEhbKT6FwzSK2CgxkG71o6/HLiXjJ8+l3HVj7MhVuNnzSTU/NGaYvWQzdsb84EjtGmKGD3vr8tMQYjaVRwZyYUkdR+qSUgMOZQPs0ygvI4K2nvZGX4qpgVNbvaPwy6e3QZtyVOHzVqW0aGy7G1KETbcwYuEtuNwviH4cwqOcMYJiALLk3KaulBkjBbfHT5/ajSK/m9hrZ29Bwsdyk8p6zMF+hZqUGeoOV+5+bnr/McJV4jwimg62tXkDH752eJFP0vWAf0DS7vGJQ9sOduyWUyvyfGNss2MI3QcBYy0Mn3iCwI/rFSsoXjoIjVp8CNhtFgw6sY/Ctvq7h4/GiwkxTtuYioHDZeBFWe+8gRSf3W0t6VuzKJgmUN+u4SMes/CTuZm/vkWtG6ou8MhkSSSbMmg73MdumXjrIBhM7Bauk6a3PVpUgk8u8M+e0kOwnCtgAN6gsdvHr4qQVOqcL5KD/NeFAo07IaZsW6odHkZ8pZlEtoYMAkxXkZLNRQ=
+    file:
+      - bin/dnsupdater-windows-amd64.zip
+      - bin/dnsupdater-darwin-amd64.tar.gz
+      - bin/dnsupdater-linux-amd64.tar.gz
+      - bin/dnsupdater-linux-mips-softfloat.tar.gz
+    on:
+      repo: boris1993/dnsupdater
+      tags: true
+      condition: $TRAVIS_TAG =~ "^v[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+$"

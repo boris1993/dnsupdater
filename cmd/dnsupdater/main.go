@@ -16,23 +16,27 @@ import (
 func main() {
 	var err error
 
-	var config = configs.Get()
+	config, err := configs.Get()
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	// Fetch the current external IP address.
-	ipAddress, err := getCurrentIPAddress(config)
-
+	currentIPAddress, err := getCurrentIPAddress(*config)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
 	// Process CloudFlare records
-	err = cloudflare.ProcessRecords(config, ipAddress)
-
+	err = cloudflare.ProcessRecords(currentIPAddress)
 	if err != nil {
 		log.Errorln(err)
 	}
 
-	aliyun.ProcessRecords(config, ipAddress)
+	err = aliyun.ProcessRecords(currentIPAddress)
+	if err != nil {
+		log.Errorln(err)
+	}
 
 	os.Exit(0)
 }
@@ -62,7 +66,6 @@ func getCurrentIPAddress(config configs.Config) (string, error) {
 
 	//region fetch your IPv4 address
 	resp, err := http.Get(config.System.IPAddrAPI)
-
 	if err != nil {
 		return "", err
 	}
@@ -77,7 +80,6 @@ func getCurrentIPAddress(config configs.Config) (string, error) {
 	}()
 
 	body, err := ioutil.ReadAll(resp.Body)
-
 	if err != nil {
 		return "", err
 	}

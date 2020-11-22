@@ -1,0 +1,27 @@
+[
+  {
+    "RR": "test1",
+    "Line": "default",
+    "Status": "ENABLE",
+    "Locked": false,
+    "Type": "A",
+    "DomainName": "example.com",
+    "Value": "192.168.1.1",
+    "RecordId": "19382404996996096",
+    "TTL": 600,
+    "Weight": 1
+  },
+  {
+    "RR": "test1.test",
+    "Line": "default",
+    "Status": "ENABLE",
+    "Locked": false,
+    "Type": "A",
+    "DomainName": "example.com",
+    "Value": "192.168.1.2",
+    "RecordId": "19382404996996096",
+    "TTL": 600,
+    "Weight": 1
+  }
+]
+

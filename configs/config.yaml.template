@@ -2,6 +2,7 @@
 System:
   IPAddrAPI: "https://api.ipify.org/"
   CloudFlareAPIEndpoint: "https://api.cloudflare.com/client/v4"
+  AliyunAPIEndpoint: "https://alidns.aliyuncs.com"
 CloudFlareRecords:
   - APIKey: "YOUR_CLOUDFLARE_API_KEY"
     ZoneID: "ZONE_ID_OF_YOUR_DOMAIN"

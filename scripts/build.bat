@@ -6,8 +6,8 @@ SET ROOT_DIR=%~dp0\..
 SET APP_NAME=dnsupdater
 SET PACKAGE_NAME=github.com/boris1993/%APP_NAME%
 
-IF EXIST install.bat GOTO check-option
-ECHO install.bat must be run from its folder
+IF EXIST build.bat GOTO check-option
+ECHO build.bat must be run from its folder
 GOTO end
 
 :check-option
@@ -59,10 +59,10 @@ IF NOT EXIST %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH% (
     mkdir %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%
 )
 
-go build -i -o %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%\%APP_NAME%.exe %ROOT_DIR%\cmd\dnsupdater.go
+go build -i -o %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%\%APP_NAME%.exe %ROOT_DIR%\cmd\dnsupdater\main.go
 
 ECHO Copying template config file to target directory...
-copy %ROOT_DIR%\config.yaml.template %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH% > nul 2>&1
+copy %ROOT_DIR%\configs\config.yaml.template %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH% > nul 2>&1
 
 IF errorlevel 1 GOTO error
 GOTO success
@@ -74,10 +74,10 @@ IF NOT EXIST %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS% (
     mkdir %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS%
 )
 
-go build -i -o %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS%\%APP_NAME% %ROOT_DIR%\cmd\dnsupdater.go
+go build -i -o %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS%\%APP_NAME% %ROOT_DIR%\cmd\dnsupdater\main.go
 
 ECHO Copying template config file to target directory...
-copy %ROOT_DIR%\config.yaml.template %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS% > nul 2>&1
+copy %ROOT_DIR%\configs\config.yaml.template %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%-%GOMIPS% > nul 2>&1
 
 IF errorlevel 1 GOTO error
 GOTO success
@@ -89,10 +89,10 @@ IF NOT EXIST %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH% (
     mkdir %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%
 )
 
-go build -i -o %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%\%APP_NAME% %ROOT_DIR%\cmd\dnsupdater.go
+go build -i -o %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH%\%APP_NAME% %ROOT_DIR%\cmd\dnsupdater\main.go
 
 ECHO Copying template config file to target directory...
-copy %ROOT_DIR%\config.yaml.template %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH% > nul 2>&1
+copy %ROOT_DIR%\configs\config.yaml.template %ROOT_DIR%\bin\%APP_NAME%-%GOOS%-%GOARCH% > nul 2>&1
 
 IF errorlevel 1 GOTO error
 GOTO success

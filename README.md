@@ -3,8 +3,6 @@
 ![GitHub](https://img.shields.io/github/license/boris1993/dnsupdater)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/boris1993/dnsupdater)](https://github.com/boris1993/dnsupdater/releases/latest)
 ![Total download](https://img.shields.io/github/downloads/boris1993/dnsupdater/total.svg)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=boris1993_dnsupdater&metric=alert_status)](https://sonarcloud.io/dashboard?id=boris1993_dnsupdater)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fboris1993%2Fdnsupdater.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fboris1993%2Fdnsupdater?ref=badge_shield)
 
 This app allows you updating your DNS records with your current external IP address.
 
@@ -33,7 +31,7 @@ You can check for all preset targets by running the scripts in the `scripts` fol
 For Windows users:
 
 ```cmd
-install.bat /?
+build.bat /?
 ```
 
 For *NIX users:
