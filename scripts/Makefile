@@ -1,6 +1,7 @@
 ROOT_DIR:=$(realpath $(dir $(realpath $(lastword $(MAKEFILE_LIST))))../)
 GOCMD=go
 GOBUILD=$(GOCMD) build
+GOTEST=$(GOCMD) test
 
 BUILD_ARGS=-i
 
@@ -13,7 +14,9 @@ help:
 	@echo Usage: make \<TARGET\>
 	@echo TARGET could be windows-amd64, darwin-amd64, linux-amd64, mips-softfloat
 	@echo All 4 targets will be built if target is not specified
-	@echo $(ROOT_DIR)
+
+test:
+	$(GOTEST) $(ROOT_DIR)/internal/helper/*
 
 windows-amd64:
 	GOARCH=amd64 GOOS=windows $(GOBUILD) $(BUILD_ARGS) -o $(ROOT_DIR)/bin/$(APP_NAME)-windows-amd64/$(APP_NAME).exe $(ROOT_DIR)/cmd/dnsupdater/main.go
