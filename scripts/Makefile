@@ -17,7 +17,7 @@ help:
 	@echo All 4 targets will be built if target is not specified
 
 test:
-	$(GOTEST) $(GOTEST_ARGS) $(ROOT_DIR)/internal/helper/*
+	$(GOTEST) $(GOTEST_ARGS) $(ROOT_DIR)/internal/helper/* $(ROOT_DIR)/internal/configs
 
 windows-amd64:
 	GOARCH=amd64 GOOS=windows $(GOBUILD) $(BUILD_ARGS) -o $(ROOT_DIR)/bin/$(APP_NAME)-windows-amd64/$(APP_NAME).exe $(ROOT_DIR)/cmd/dnsupdater/main.go
