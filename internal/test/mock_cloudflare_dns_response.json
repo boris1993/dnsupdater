@@ -1,0 +1,42 @@
+[
+  {
+    "id": "dummyID_1",
+    "zone_id": "dummyZoneID",
+    "zone_name": "example.com",
+    "name": "test.example.com",
+    "type": "A",
+    "content": "192.168.1.1",
+    "proxiable": true,
+    "proxied": false,
+    "ttl": 1,
+    "locked": false,
+    "meta": {
+      "auto_added": false,
+      "managed_by_apps": false,
+      "managed_by_argo_tunnel": false,
+      "source": "primary"
+    },
+    "created_on": "2020-10-31T13:30:24.483863Z",
+    "modified_on": "2020-10-31T13:30:24.483863Z"
+  },
+  {
+    "id": "dummyID_2",
+    "zone_id": "dummyZoneID",
+    "zone_name": "example.com",
+    "name": "test.test.example.com",
+    "type": "A",
+    "content": "192.168.1.2",
+    "proxiable": true,
+    "proxied": false,
+    "ttl": 1,
+    "locked": false,
+    "meta": {
+      "auto_added": false,
+      "managed_by_apps": false,
+      "managed_by_argo_tunnel": false,
+      "source": "primary"
+    },
+    "created_on": "2020-10-31T13:32:59.995502Z",
+    "modified_on": "2020-10-31T13:32:59.995502Z"
+  }
+]

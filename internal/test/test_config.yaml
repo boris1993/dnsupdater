@@ -7,11 +7,11 @@ CloudFlareRecords:
   - APIKey: "dummyApiKey"
     ZoneID: "dummyZoneID"
     AuthEmail: "test@example.com"
-    DomainName: "test1.example.com"
+    DomainName: "test.example.com"
   - APIKey: "dummyApiKey"
     ZoneID: "dummyZoneID"
     AuthEmail: "test@example.com"
-    DomainName: "test1.test.example.com"
+    DomainName: "test.test.example.com"
 AliDNSRecords:
   - AccessKeyID: "dummyAccessKeyId"
     AccessKeySecret: "dummyAccessKeySecret"
