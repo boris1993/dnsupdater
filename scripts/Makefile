@@ -2,6 +2,7 @@ ROOT_DIR:=$(realpath $(dir $(realpath $(lastword $(MAKEFILE_LIST))))../)
 GOCMD=go
 GOBUILD=$(GOCMD) build
 GOTEST=$(GOCMD) test
+GOTEST_ARGS=-coverprofile=coverage.out
 
 BUILD_ARGS=-i
 
@@ -16,7 +17,7 @@ help:
 	@echo All 4 targets will be built if target is not specified
 
 test:
-	$(GOTEST) $(ROOT_DIR)/internal/helper/*
+	$(GOTEST) $(GOTEST_ARGS) $(ROOT_DIR)/internal/helper/*
 
 windows-amd64:
 	GOARCH=amd64 GOOS=windows $(GOBUILD) $(BUILD_ARGS) -o $(ROOT_DIR)/bin/$(APP_NAME)-windows-amd64/$(APP_NAME).exe $(ROOT_DIR)/cmd/dnsupdater/main.go
