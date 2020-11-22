@@ -5,11 +5,11 @@ System:
   AliyunAPIEndpoint: "https://alidns.aliyuncs.com"
 CloudFlareRecords:
   - APIKey: "dummyApiKey"
-    ZoneID: "dummyApiSecret"
+    ZoneID: "dummyZoneID"
     AuthEmail: "test@example.com"
     DomainName: "test1.example.com"
   - APIKey: "dummyApiKey"
-    ZoneID: "dummyApiSecret"
+    ZoneID: "dummyZoneID"
     AuthEmail: "test@example.com"
     DomainName: "test1.test.example.com"
 AliDNSRecords:

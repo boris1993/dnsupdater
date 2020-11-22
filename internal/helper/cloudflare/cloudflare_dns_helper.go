@@ -1,4 +1,3 @@
-// Package cfutil provides utilities about manipulating a CloudFlare DNS record.
 package cloudflare
 
 import (
@@ -14,7 +13,12 @@ import (
 
 // ProcessRecords takes the configuration as well as the current IP address,
 // then check and update each DNS record in CloudFlare
-func ProcessRecords(config configs.Config, currentAddress string) error {
+func ProcessRecords(currentIPAddress string) error {
+	config, err := configs.Get()
+	if err != nil {
+		return err
+	}
+
 	if config.System.CloudFlareAPIEndpoint == "" {
 		return errors.New(constants.ErrCloudFlareAPIAddressEmpty)
 	}
@@ -36,8 +40,6 @@ func ProcessRecords(config configs.Config, currentAddress string) error {
 		// Prints which record is being processed
 		log.Println(constants.MsgHeaderDomainProcessing, cloudFlareRecord.DomainName)
 
-		var newIpAddress = currentAddress
-
 		// Then fetch the IP address of the specified DNS record
 		id, recordAddress, err := getCFDnsRecordIpAddress(cloudFlareRecord)
 
@@ -47,12 +49,12 @@ func ProcessRecords(config configs.Config, currentAddress string) error {
 		}
 
 		// Do nothing when the IP address didn't change.
-		if newIpAddress == recordAddress {
+		if currentIPAddress == recordAddress {
 			log.Println(constants.MsgIPAddrNotChanged)
 			continue
 		} else {
 			// Update the IP address when changed.
-			status, err := updateCFDNSRecord(id, newIpAddress, cloudFlareRecord)
+			status, err := updateCFDNSRecord(id, currentIPAddress, cloudFlareRecord)
 
 			if err != nil {
 				log.Errorln(err)
@@ -80,7 +82,12 @@ func ProcessRecords(config configs.Config, currentAddress string) error {
 // the second value returned is the IP address of this record,
 // or an error will be returned if any error occurs.
 func getCFDnsRecordIpAddress(cloudFlareRecord configs.CloudFlare) (string, string, error) {
-	APIEndpoint := configs.Get().System.CloudFlareAPIEndpoint
+	config, err := configs.Get()
+	if err != nil {
+		return "", "", err
+	}
+
+	APIEndpoint := config.System.CloudFlareAPIEndpoint
 
 	client := &http.Client{}
 
@@ -160,7 +167,12 @@ func getCFDnsRecordIpAddress(cloudFlareRecord configs.CloudFlare) (string, strin
 // The return value is the status(true or false) of the update process,
 // or an error will be returned if any error occurs.
 func updateCFDNSRecord(id string, address string, cloudFlareRecord configs.CloudFlare) (bool, error) {
-	APIEndpoint := configs.Get().System.CloudFlareAPIEndpoint
+	config, err := configs.Get()
+	if err != nil {
+		return false, err
+	}
+
+	APIEndpoint := config.System.CloudFlareAPIEndpoint
 
 	client := &http.Client{}
 
