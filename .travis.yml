@@ -19,11 +19,6 @@ cache:
     - "$HOME/.sonar/cache"
 notifications:
   email: false
-branches:
-  only:
-    - master
-    - dev
-    - "/^v\\d+\\.\\d+(\\.\\d+)?(-\\S*)?$/"
 before_deploy:
   - make -f scripts/Makefile
   - cd bin
