@@ -1,4 +1,4 @@
-package configs
+package common
 
 import (
 	"os"
@@ -16,13 +16,13 @@ func TestGet(t *testing.T) {
 
 func testGetSuccess(t *testing.T) {
 	Debug = true
-	Path = testResourcePath + "/test_config.yaml"
-	if _, err := os.Stat(Path); os.IsNotExist(err) {
+	ConfigFilePath = testResourcePath + "/test_config.yaml"
+	if _, err := os.Stat(ConfigFilePath); os.IsNotExist(err) {
 		t.Errorf("test_config.yaml doesn't exist")
 		return
 	}
 
-	config, err := Get()
+	config, err := GetConfig()
 	if err != nil {
 		t.Error(err)
 		return
@@ -49,9 +49,9 @@ func testGetSuccess(t *testing.T) {
 
 func testGetFail(t *testing.T) {
 	Debug = true
-	Path = testResourcePath + "/non_existent_config.yaml"
+	ConfigFilePath = testResourcePath + "/non_existent_config.yaml"
 
-	_, err := Get()
+	_, err := GetConfig()
 	if err == nil {
 		t.Error("TestGetFail should fail")
 	}

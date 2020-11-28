@@ -1,5 +1,5 @@
 // Package constants contains all constants needed in this programme
-package constants
+package common
 
 const MsgHeaderDNSRecordUpdateSuccessful = "Successfully updated the DNS record"
 const MsgHeaderCurrentIPv4Addr = "Current IPv4 address is:"
