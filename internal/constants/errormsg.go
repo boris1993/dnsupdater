@@ -4,6 +4,8 @@ package constants
 const MsgHeaderDNSRecordUpdateSuccessful = "Successfully updated the DNS record"
 const MsgHeaderCurrentIPv4Addr = "Current IPv4 address is:"
 const MsgHeaderCurrentIPv6Addr = "Current IPv6 address is:"
+const MsgIPv6Disabled = "IPv6 disabled. Will skip updating all the AAAA records"
+const MsgIPv6AddrNotAvailable = "No valid IPv6 internet address. Skipping updating this record."
 const MsgHeaderFetchingIPOfDomain = "Fetching the IP address of domain"
 const MsgHeaderLoadingConfig = "Loading configurations from"
 const MsgHeaderDomainProcessing = "Processing"

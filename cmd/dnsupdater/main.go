@@ -27,9 +27,20 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	currentIPv6Address, err := getCurrentIPv6Address(*config)
-	if err != nil {
-		log.Fatalln(err)
+	// For those who doesn't have IPv6 internet access,
+	// the currentIPv6Address will be an empty string
+	var currentIPv6Address = ""
+	if config.System.IPv6AddrAPI == "" {
+		log.Info(constants.MsgIPv6Disabled)
+	} else {
+		currentIPv6Address, err = getCurrentIPv6Address(*config)
+		if err != nil {
+			log.Warnln("Failed to retrieve your IPv6 address.")
+			log.Warnln("If you saw the \"no route to host\" error, " +
+				"Please verify if you have IPv6 internet access, " +
+				"or you can disable IPv6 support by removing the \"IPv6AddrAPI\" in config.yaml.")
+			log.Fatalln(err)
+		}
 	}
 	//endregion
 
@@ -40,7 +51,7 @@ func main() {
 	}
 
 	// Process Aliyun DNS records
-	err = aliyun.ProcessRecords(currentIPv4Address)
+	err = aliyun.ProcessRecords(currentIPv4Address, currentIPv6Address)
 	if err != nil {
 		log.Errorln(err)
 	}

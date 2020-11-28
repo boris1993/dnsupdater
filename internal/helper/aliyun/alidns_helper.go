@@ -13,7 +13,7 @@ import (
 
 // ProcessRecords takes the configuration as well as the current IP address
 // then check and update each DNS record in Aliyun DNS
-func ProcessRecords(currentIPAddress string) error {
+func ProcessRecords(currentIPv4Address string, currentIPv6Address string) error {
 	config, err := configs.Get()
 	if err != nil {
 		return err
@@ -29,9 +29,15 @@ func ProcessRecords(currentIPAddress string) error {
 		if aliDNSRecord.RegionID == "" ||
 			aliDNSRecord.AccessKeyID == "" ||
 			aliDNSRecord.AccessKeySecret == "" ||
-			aliDNSRecord.DomainName == "" {
+			aliDNSRecord.DomainName == "" ||
+			aliDNSRecord.DomainType == "" {
 			// Print error and skip to next record when bad configuration found
 			log.Errorln(constants.ErrAliDNSRecordConfigIncomplete)
+			continue
+		}
+
+		if aliDNSRecord.DomainType != "A" && aliDNSRecord.DomainType != "AAAA" {
+			log.Errorln(constants.ErrInvalidDomainType)
 			continue
 		}
 
@@ -43,7 +49,8 @@ func ProcessRecords(currentIPAddress string) error {
 			continue
 		}
 
-		if recordIP == currentIPAddress {
+		if (aliDNSRecord.DomainType == "A" && recordIP == currentIPv4Address) ||
+			(aliDNSRecord.DomainType == "AAAA" && recordIP == currentIPv6Address) {
 			log.Println(constants.MsgIPAddrNotChanged)
 			continue
 		}
@@ -52,7 +59,23 @@ func ProcessRecords(currentIPAddress string) error {
 		// Remove the TLD and the domain, what's rest are the host record
 		hostRecord := strings.Join(domainNameParts[:len(domainNameParts)-2], ".")
 
-		status, err := updateAliDNSRecord(recordId, hostRecord, currentIPAddress, aliDNSRecord)
+		var status bool
+		switch aliDNSRecord.DomainType {
+		case "A":
+			status, err = updateAliDNSRecord(recordId, hostRecord, currentIPv4Address, aliDNSRecord)
+			break
+		case "AAAA":
+			// If there's no valid IPv6 internet address,
+			// then skip updating this record and head to the next one
+			if currentIPv6Address == "" {
+				log.Info(constants.MsgIPv6AddrNotAvailable)
+				continue
+			}
+
+			status, err = updateAliDNSRecord(recordId, hostRecord, currentIPv6Address, aliDNSRecord)
+			break
+		}
+
 		if err != nil {
 			log.Errorln(err)
 			continue
@@ -86,7 +109,8 @@ func getDomainRecordID(aliDNSConfigRecord configs.AliDNS) (recordId string, reco
 	param := make(map[string]string)
 	param[QueryParamDomainName] = strings.Join([]string{domainName, tld}, ".")
 	param[QueryParamKeyWord] = hostRecord
-	param[QueryParamSearchMode] = SearchModeExact
+	param[QueryParamSearchMode] = SearchModeAdvanced
+	param[QueryParamType] = aliDNSConfigRecord.DomainType
 
 	request, err := BuildAliDNSRequest(
 		config.System.AliyunAPIEndpoint,
@@ -137,11 +161,22 @@ func getDomainRecordID(aliDNSConfigRecord configs.AliDNS) (recordId string, reco
 		return "", "", err
 	}
 
-	record := describeDomainRecordsResponse.DomainRecords.Record[0]
+	// The API is poorly designed and I just can't figure out a way to exactly retrieve the wanted record,
+	// so I have to iterate the response and find the matched one.
+	for _, domainRecord := range describeDomainRecordsResponse.DomainRecords.Record {
+		if domainRecord.RR == hostRecord && domainRecord.Type == aliDNSConfigRecord.DomainType {
+			log.Printf(constants.MsgFormatAliDNSFetchResult,
+				aliDNSConfigRecord.DomainName,
+				domainRecord.Value,
+				domainRecord.RecordID)
 
-	log.Printf(constants.MsgFormatAliDNSFetchResult, record.DomainName, record.Value, record.RecordID)
+			return domainRecord.RecordID, domainRecord.Value, nil
+		}
+	}
 
-	return record.RecordID, record.Value, nil
+	return "",
+		"",
+		errors.New(constants.ErrMsgHeaderFetchDomainInfoFailed + aliDNSConfigRecord.DomainName)
 }
 
 // Updates the IP address of the specified domain.
@@ -156,7 +191,7 @@ func updateAliDNSRecord(recordId string, RR string, currentIPAddress string, ali
 	param := make(map[string]string)
 	param[QueryParamRecordId] = recordId
 	param[QueryParamRR] = RR
-	param[QueryParamType] = "A"
+	param[QueryParamType] = aliDNSConfigRecord.DomainType
 	param[QueryParamValue] = currentIPAddress
 
 	request, err := BuildAliDNSRequest(

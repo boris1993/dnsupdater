@@ -49,6 +49,7 @@ type AliDNS struct {
 	AccessKeySecret string `yaml:"AccessKeySecret"`
 	RegionID        string `yaml:"RegionID"`
 	DomainName      string `yaml:"DomainName"`
+	DomainType      string `yaml:"DomainType"`
 }
 
 func Get() (*Config, error) {

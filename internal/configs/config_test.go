@@ -41,8 +41,8 @@ func testGetSuccess(t *testing.T) {
 		return
 	}
 
-	if len(config.AliDNSRecords) != 3 {
-		t.Errorf("Error reading the AliDNSRecords part. Expected 2 records but found %d", len(config.AliDNSRecords))
+	if len(config.AliDNSRecords) != 5 {
+		t.Errorf("Error reading the AliDNSRecords part. Expected 5 records but found %d", len(config.AliDNSRecords))
 		return
 	}
 }

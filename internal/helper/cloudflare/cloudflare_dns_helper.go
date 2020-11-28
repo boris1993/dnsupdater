@@ -69,6 +69,13 @@ func ProcessRecords(currentIPv4Address string, currentIPv6Address string) error 
 				status, err = updateCFDNSRecord(id, currentIPv4Address, cloudFlareRecord)
 				break
 			case "AAAA":
+				// If there's no valid IPv6 internet address,
+				// then skip updating this record and head to the next one
+				if currentIPv6Address == "" {
+					log.Info(constants.MsgIPv6AddrNotAvailable)
+					continue
+				}
+
 				status, err = updateCFDNSRecord(id, currentIPv6Address, cloudFlareRecord)
 				break
 			}
