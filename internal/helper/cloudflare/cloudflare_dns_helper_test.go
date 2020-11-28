@@ -38,9 +38,10 @@ func TestCloudFlareDNSHelper(t *testing.T) {
 }
 
 func testProcessRecords(t *testing.T) {
-	currentIPAddress := "192.168.1.1"
+	currentIPv4Address := "192.168.1.1"
+	currentIPv6Address := "240a:38b:5dc0:5d00:e1dd:c7c7:169a:acbb"
 
-	err := ProcessRecords(currentIPAddress)
+	err := ProcessRecords(currentIPv4Address, currentIPv6Address)
 	if err != nil {
 		t.Error(err)
 		return
@@ -111,9 +112,11 @@ func mockCloudFlareDNSResponse(writer http.ResponseWriter, request *http.Request
 	// Handle query domain request
 	case http.MethodGet:
 		domainName := request.URL.Query().Get("name")
+		domainType := request.URL.Query().Get("type")
 
 		for index := range serverRecords {
-			if serverRecords[index].Name == domainName {
+			if serverRecords[index].Name == domainName &&
+				serverRecords[index].RecordType == domainType {
 				_, err := writer.Write(generateQueryDomainResponse(serverRecords[index]))
 				if err != nil {
 					log.Error(err)
@@ -124,6 +127,8 @@ func mockCloudFlareDNSResponse(writer http.ResponseWriter, request *http.Request
 		}
 
 	case http.MethodPut:
+		// I'm not gonna mock another response for the IPv6 record
+		// because we only care about the value of "success"
 		bytes, err := generateMockedUpdateDomainResponse()
 		if err != nil {
 			log.Error(err)

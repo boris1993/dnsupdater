@@ -2,7 +2,10 @@
 package constants
 
 const MsgHeaderDNSRecordUpdateSuccessful = "Successfully updated the DNS record"
-const MsgHeaderCurrentIPAddr = "Current IPv4 address is:"
+const MsgHeaderCurrentIPv4Addr = "Current IPv4 address is:"
+const MsgHeaderCurrentIPv6Addr = "Current IPv6 address is:"
+const MsgIPv6Disabled = "IPv6 disabled. Will skip updating all the AAAA records"
+const MsgIPv6AddrNotAvailable = "No valid IPv6 internet address. Skipping updating this record."
 const MsgHeaderFetchingIPOfDomain = "Fetching the IP address of domain"
 const MsgHeaderLoadingConfig = "Loading configurations from"
 const MsgHeaderDomainProcessing = "Processing"
@@ -17,9 +20,10 @@ const ErrMsgHeaderFetchDomainInfoFailed = "Failed to get the information for dom
 const ErrMsgHeaderUpdateDNSRecordFailed = "Failed to update the DNS record"
 const MsgIPAddrNotChanged = "IP address not changed. Will not update the DNS record."
 
-const MsgCheckingCurrentIPAddr = "Checking current IP address..."
+const MsgCheckingCurrentIPv4Addr = "Checking current IPv4 address..."
+const MsgCheckingCurrentIPv6Addr = "Checking current IPv6 address..."
 const ErrNoDNSRecordFoundPrefix = "No record matches the domain name "
-const ErrMultipleDNSRecordsFound = "Found multiple records"
+const ErrInvalidDomainType = "The type of the domain is invalid. Only A and AAAA are accepted."
 
 const ErrCloseHTTPConnectionFail = "Error closing the HTTP connection"
 const ErrIPAddressFetchingAPIEmpty = "API address for fetching current IP address cannot be empty"

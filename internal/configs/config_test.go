@@ -28,18 +28,21 @@ func testGetSuccess(t *testing.T) {
 		return
 	}
 
-	if config.System.IPAddrAPI == "" || config.System.CloudFlareAPIEndpoint == "" || config.System.AliyunAPIEndpoint == "" {
+	if config.System.IPAddrAPI == "" ||
+		config.System.IPv6AddrAPI == "" ||
+		config.System.CloudFlareAPIEndpoint == "" ||
+		config.System.AliyunAPIEndpoint == "" {
 		t.Errorf("Content empty in the System part of test_config.yaml")
 		return
 	}
 
-	if len(config.CloudFlareRecords) != 2 {
-		t.Errorf("Error reading the CloudFlareRecords part. Expected 2 records but found %d", len(config.CloudFlareRecords))
+	if len(config.CloudFlareRecords) != 4 {
+		t.Errorf("Error reading the CloudFlareRecords part. Expected 4 records but found %d", len(config.CloudFlareRecords))
 		return
 	}
 
-	if len(config.AliDNSRecords) != 3 {
-		t.Errorf("Error reading the AliDNSRecords part. Expected 2 records but found %d", len(config.AliDNSRecords))
+	if len(config.AliDNSRecords) != 5 {
+		t.Errorf("Error reading the AliDNSRecords part. Expected 5 records but found %d", len(config.AliDNSRecords))
 		return
 	}
 }

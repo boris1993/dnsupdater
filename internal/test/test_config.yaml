@@ -1,6 +1,7 @@
 ---
 System:
   IPAddrAPI: "https://api.ipify.org/"
+  IPv6AddrAPI: "https://api6.ipify.org"
   CloudFlareAPIEndpoint: "https://api.cloudflare.com/client/v4"
   AliyunAPIEndpoint: "https://alidns.aliyuncs.com"
 CloudFlareRecords:
@@ -8,20 +9,45 @@ CloudFlareRecords:
     ZoneID: "dummyZoneID"
     AuthEmail: "test@example.com"
     DomainName: "test.example.com"
+    DomainType: "A"
   - APIKey: "dummyApiKey"
     ZoneID: "dummyZoneID"
     AuthEmail: "test@example.com"
     DomainName: "test.test.example.com"
+    DomainType: "A"
+  - APIKey: "dummyApiKey"
+    ZoneID: "dummyZoneID"
+    AuthEmail: "test@example.com"
+    DomainName: "test.example.com"
+    DomainType: "AAAA"
+  - APIKey: "dummyApiKey"
+    ZoneID: "dummyZoneID"
+    AuthEmail: "test@example.com"
+    DomainName: "test.test.example.com"
+    DomainType: "AAAA"
 AliDNSRecords:
   - AccessKeyID: "dummyAccessKeyId"
     AccessKeySecret: "dummyAccessKeySecret"
     RegionID: "cn-hangzhou" # Only this region is accepted so DO NOT MODIFY THIS PROPERTY
     DomainName: "test1.example.com"
+    DomainType: "A"
   - AccessKeyID: "dummyAccessKeyId"
     AccessKeySecret: "dummyAccessKeySecret"
     RegionID: "cn-hangzhou" # Only this region is accepted so DO NOT MODIFY THIS PROPERTY
     DomainName: "test1.test.example.com"
+    DomainType: "A"
   - AccessKeyID: "dummyAccessKeyId"
     AccessKeySecret: "dummyAccessKeySecret"
     RegionID: "cn-hangzhou" # Only this region is accepted so DO NOT MODIFY THIS PROPERTY
     DomainName: ""
+    DomainType: "A"
+  - AccessKeyID: "dummyAccessKeyId"
+    AccessKeySecret: "dummyAccessKeySecret"
+    RegionID: "cn-hangzhou" # Only this region is accepted so DO NOT MODIFY THIS PROPERTY
+    DomainName: "test1.example.com"
+    DomainType: "AAAA"
+  - AccessKeyID: "dummyAccessKeyId"
+    AccessKeySecret: "dummyAccessKeySecret"
+    RegionID: "cn-hangzhou" # Only this region is accepted so DO NOT MODIFY THIS PROPERTY
+    DomainName: "test1.test.example.com"
+    DomainType: "AAAA"

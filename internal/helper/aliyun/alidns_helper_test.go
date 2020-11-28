@@ -39,8 +39,9 @@ func TestAliDNSHelper(t *testing.T) {
 
 func testProcessRecords(t *testing.T) {
 	currentIPAddress := "192.168.1.1"
+	currentIPv6Address := "240a:38b:5dc0:5d00:e1dd:c7c7:169a:acbb"
 
-	err := ProcessRecords(currentIPAddress)
+	err := ProcessRecords(currentIPAddress, currentIPv6Address)
 	if err != nil {
 		t.Error(err)
 		return
@@ -101,10 +102,13 @@ func mockAliyunDNSResponse(writer http.ResponseWriter, request *http.Request) {
 	case ActionDescribeDomainRecords:
 		domainName := request.URL.Query().Get(QueryParamDomainName)
 		keyWord := request.URL.Query().Get(QueryParamKeyWord)
+		domainType := request.URL.Query().Get(QueryParamType)
 
 		for index := range serverRecords {
 			serverRecord := serverRecords[index]
-			if serverRecord.DomainName == domainName && serverRecord.RR == keyWord {
+			if serverRecord.DomainName == domainName &&
+				serverRecord.RR == keyWord &&
+				serverRecord.Type == domainType {
 				_, err := writer.Write(generateSuccessDescribeDomainRecordResponseJson(serverRecord))
 				if err != nil {
 					log.Error(err)
