@@ -21,19 +21,26 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	// Fetch the current external IP address.
-	currentIPAddress, err := getCurrentIPAddress(*config)
+	//region Fetch the current external IP address.
+	currentIPv4Address, err := getCurrentIPv4Address(*config)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	// Process CloudFlare records
-	err = cloudflare.ProcessRecords(currentIPAddress)
+	currentIPv6Address, err := getCurrentIPv6Address(*config)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	//endregion
+
+	// Process CloudFlare DNS records
+	err = cloudflare.ProcessRecords(currentIPv4Address, currentIPv6Address)
 	if err != nil {
 		log.Errorln(err)
 	}
 
-	err = aliyun.ProcessRecords(currentIPAddress)
+	// Process Aliyun DNS records
+	err = aliyun.ProcessRecords(currentIPv4Address)
 	if err != nil {
 		log.Errorln(err)
 	}
@@ -56,13 +63,13 @@ func init() {
 	}
 }
 
-// getCurrentIPAddress returns the external IP address for your network
-func getCurrentIPAddress(config configs.Config) (string, error) {
+// getCurrentIPv4Address returns the external IP address for your network.
+func getCurrentIPv4Address(config configs.Config) (string, error) {
 	if config.System.IPAddrAPI == "" {
 		return "", errors.New(constants.ErrIPAddressFetchingAPIEmpty)
 	}
 
-	log.Println(constants.MsgCheckingCurrentIPAddr)
+	log.Println(constants.MsgCheckingCurrentIPv4Addr)
 
 	//region fetch your IPv4 address
 	resp, err := http.Get(config.System.IPAddrAPI)
@@ -88,7 +95,43 @@ func getCurrentIPAddress(config configs.Config) (string, error) {
 	ipAddress := string(body)
 	//endregion
 
-	log.Println(constants.MsgHeaderCurrentIPAddr, ipAddress)
+	log.Println(constants.MsgHeaderCurrentIPv4Addr, ipAddress)
 
 	return ipAddress, nil
+}
+
+// getCurrentIPv6Address returns the external IPv6 address for your network.
+// Typically this should be your "temporary" IPv6 address.
+func getCurrentIPv6Address(config configs.Config) (string, error) {
+	if config.System.IPv6AddrAPI == "" {
+		return "", errors.New(constants.ErrIPAddressFetchingAPIEmpty)
+	}
+
+	log.Println(constants.MsgCheckingCurrentIPv6Addr)
+
+	resp, err := http.Get(config.System.IPv6AddrAPI)
+	if err != nil {
+		return "", err
+	}
+
+	// Handle errors when closing the HTTP connection
+	defer func() {
+		err := resp.Body.Close()
+
+		if err != nil {
+			log.Errorln(constants.ErrCloseHTTPConnectionFail, err)
+		}
+	}()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	// Body only contains the IP address
+	ipv6Address := string(body)
+
+	log.Println(constants.MsgHeaderCurrentIPv6Addr, ipv6Address)
+
+	return ipv6Address, nil
 }

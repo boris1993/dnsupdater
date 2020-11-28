@@ -29,6 +29,7 @@ type Config struct {
 // System describes the System properties in Config.yaml
 type System struct {
 	IPAddrAPI             string `yaml:"IPAddrAPI"`
+	IPv6AddrAPI           string `yaml:"IPv6AddrAPI"`
 	CloudFlareAPIEndpoint string `yaml:"CloudFlareAPIEndpoint"`
 	AliyunAPIEndpoint     string `yaml:"AliyunAPIEndpoint"`
 }
@@ -40,6 +41,7 @@ type CloudFlare struct {
 	ZoneID     string `yaml:"ZoneID"`
 	AuthEmail  string `yaml:"AuthEmail"`
 	DomainName string `yaml:"DomainName"`
+	DomainType string `yaml:"DomainType"`
 }
 
 type AliDNS struct {
