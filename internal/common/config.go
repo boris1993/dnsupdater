@@ -1,8 +1,7 @@
 // Package conf provides all models needed by this programme.
-package configs
+package common
 
 import (
-	"github.com/boris1993/dnsupdater/internal/constants"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
@@ -15,7 +14,7 @@ var once = new(sync.Once)
 
 var Debug bool
 
-var Path string
+var ConfigFilePath string
 var conf Config
 var errorInInitConfig error
 
@@ -52,7 +51,7 @@ type AliDNS struct {
 	DomainType      string `yaml:"DomainType"`
 }
 
-func Get() (*Config, error) {
+func GetConfig() (*Config, error) {
 	once.Do(func() {
 		err := initConfig()
 
@@ -71,18 +70,18 @@ func Get() (*Config, error) {
 
 // initConfig reads the Config.yaml and saves the properties in a variable.
 func initConfig() error {
-	if Path == "" {
+	if ConfigFilePath == "" {
 		absPath, err := filepath.Abs(filepath.Dir(os.Args[0]))
 		if err != nil {
 			return err
 		}
 
-		Path = filepath.Join(absPath, "config.yaml")
+		ConfigFilePath = filepath.Join(absPath, "config.yaml")
 	}
 
-	log.Println(constants.MsgHeaderLoadingConfig, Path)
+	log.Println(MsgHeaderLoadingConfig, ConfigFilePath)
 
-	bytes, err := ioutil.ReadFile(Path)
+	bytes, err := ioutil.ReadFile(ConfigFilePath)
 
 	if err != nil {
 		return err

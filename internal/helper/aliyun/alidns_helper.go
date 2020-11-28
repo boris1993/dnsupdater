@@ -3,8 +3,7 @@ package aliyun
 import (
 	"encoding/json"
 	"errors"
-	"github.com/boris1993/dnsupdater/internal/configs"
-	"github.com/boris1993/dnsupdater/internal/constants"
+	"github.com/boris1993/dnsupdater/internal/common"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
@@ -14,16 +13,16 @@ import (
 // ProcessRecords takes the configuration as well as the current IP address
 // then check and update each DNS record in Aliyun DNS
 func ProcessRecords(currentIPv4Address string, currentIPv6Address string) error {
-	config, err := configs.Get()
+	config, err := common.GetConfig()
 	if err != nil {
 		return err
 	}
 
 	if config.System.AliyunAPIEndpoint == "" {
-		return errors.New(constants.ErrAliyunAPIAddressEmpty)
+		return errors.New(common.ErrAliyunAPIAddressEmpty)
 	}
 
-	log.Println(len(config.AliDNSRecords), constants.MsgAliDNSRecordsFoundSuffix)
+	log.Println(len(config.AliDNSRecords), common.MsgAliDNSRecordsFoundSuffix)
 
 	for _, aliDNSRecord := range config.AliDNSRecords {
 		if aliDNSRecord.RegionID == "" ||
@@ -32,16 +31,16 @@ func ProcessRecords(currentIPv4Address string, currentIPv6Address string) error 
 			aliDNSRecord.DomainName == "" ||
 			aliDNSRecord.DomainType == "" {
 			// Print error and skip to next record when bad configuration found
-			log.Errorln(constants.ErrAliDNSRecordConfigIncomplete)
+			log.Errorln(common.ErrAliDNSRecordConfigIncomplete)
 			continue
 		}
 
 		if aliDNSRecord.DomainType != "A" && aliDNSRecord.DomainType != "AAAA" {
-			log.Errorln(constants.ErrInvalidDomainType)
+			log.Errorln(common.ErrInvalidDomainType)
 			continue
 		}
 
-		log.Println(constants.MsgHeaderDomainProcessing, aliDNSRecord.DomainName)
+		log.Println(common.MsgHeaderDomainProcessing, aliDNSRecord.DomainName)
 
 		recordId, recordIP, err := getDomainRecordID(aliDNSRecord)
 		if err != nil {
@@ -49,9 +48,9 @@ func ProcessRecords(currentIPv4Address string, currentIPv6Address string) error 
 			continue
 		}
 
-		if (aliDNSRecord.DomainType == "A" && recordIP == currentIPv4Address) ||
-			(aliDNSRecord.DomainType == "AAAA" && recordIP == currentIPv6Address) {
-			log.Println(constants.MsgIPAddrNotChanged)
+		if (aliDNSRecord.DomainType == "A" && common.CompareAddresses(currentIPv4Address, recordIP)) ||
+			(aliDNSRecord.DomainType == "AAAA" && common.CompareAddresses(currentIPv6Address, recordIP)) {
+			log.Println(common.MsgIPAddrNotChanged)
 			continue
 		}
 
@@ -68,7 +67,7 @@ func ProcessRecords(currentIPv4Address string, currentIPv6Address string) error 
 			// If there's no valid IPv6 internet address,
 			// then skip updating this record and head to the next one
 			if currentIPv6Address == "" {
-				log.Info(constants.MsgIPv6AddrNotAvailable)
+				log.Info(common.MsgIPv6AddrNotAvailable)
 				continue
 			}
 
@@ -82,9 +81,9 @@ func ProcessRecords(currentIPv4Address string, currentIPv6Address string) error 
 		}
 
 		if !status {
-			log.Errorln(constants.ErrMsgHeaderUpdateDNSRecordFailed, aliDNSRecord.DomainName)
+			log.Errorln(common.ErrMsgHeaderUpdateDNSRecordFailed, aliDNSRecord.DomainName)
 		} else {
-			log.Println(constants.MsgHeaderDNSRecordUpdateSuccessful, aliDNSRecord.DomainName)
+			log.Println(common.MsgHeaderDNSRecordUpdateSuccessful, aliDNSRecord.DomainName)
 		}
 	}
 
@@ -94,8 +93,8 @@ func ProcessRecords(currentIPv4Address string, currentIPv6Address string) error 
 // getDomainRecordID fetches the information of the specified record.
 //
 // See document: https://help.aliyun.com/document_detail/29776.html?spm=a2c4g.11186623.2.37.1de5425696HU8m#h2-u8FD4u56DEu53C2u65703
-func getDomainRecordID(aliDNSConfigRecord configs.AliDNS) (recordId string, recordAddress string, err error) {
-	config, err := configs.Get()
+func getDomainRecordID(aliDNSConfigRecord common.AliDNS) (recordId string, recordAddress string, err error) {
+	config, err := common.GetConfig()
 	if err != nil {
 		return "", "", err
 	}
@@ -120,7 +119,7 @@ func getDomainRecordID(aliDNSConfigRecord configs.AliDNS) (recordId string, reco
 		param,
 	)
 
-	log.Println(constants.MsgHeaderFetchingIPOfDomain, aliDNSConfigRecord.DomainName)
+	log.Println(common.MsgHeaderFetchingIPOfDomain, aliDNSConfigRecord.DomainName)
 
 	httpClient := &http.Client{}
 	response, err := httpClient.Do(request)
@@ -133,7 +132,7 @@ func getDomainRecordID(aliDNSConfigRecord configs.AliDNS) (recordId string, reco
 		err := response.Body.Close()
 
 		if err != nil {
-			log.Errorln(constants.ErrCloseHTTPConnectionFail, err)
+			log.Errorln(common.ErrCloseHTTPConnectionFail, err)
 		}
 	}()
 	if err != nil {
@@ -157,7 +156,7 @@ func getDomainRecordID(aliDNSConfigRecord configs.AliDNS) (recordId string, reco
 	}
 
 	if len(describeDomainRecordsResponse.DomainRecords.Record) == 0 {
-		err := errors.New(constants.ErrNoDNSRecordFoundPrefix + aliDNSConfigRecord.DomainName)
+		err := errors.New(common.ErrNoDNSRecordFoundPrefix + aliDNSConfigRecord.DomainName)
 		return "", "", err
 	}
 
@@ -165,7 +164,7 @@ func getDomainRecordID(aliDNSConfigRecord configs.AliDNS) (recordId string, reco
 	// so I have to iterate the response and find the matched one.
 	for _, domainRecord := range describeDomainRecordsResponse.DomainRecords.Record {
 		if domainRecord.RR == hostRecord && domainRecord.Type == aliDNSConfigRecord.DomainType {
-			log.Printf(constants.MsgFormatAliDNSFetchResult,
+			log.Printf(common.MsgFormatAliDNSFetchResult,
 				aliDNSConfigRecord.DomainName,
 				domainRecord.Value,
 				domainRecord.RecordID)
@@ -176,14 +175,14 @@ func getDomainRecordID(aliDNSConfigRecord configs.AliDNS) (recordId string, reco
 
 	return "",
 		"",
-		errors.New(constants.ErrMsgHeaderFetchDomainInfoFailed + aliDNSConfigRecord.DomainName)
+		errors.New(common.ErrMsgHeaderFetchDomainInfoFailed + aliDNSConfigRecord.DomainName)
 }
 
 // Updates the IP address of the specified domain.
 //
 // See document: https://help.aliyun.com/document_detail/29774.html?spm=a2c4g.11186623.2.35.1de5425696HU8m
-func updateAliDNSRecord(recordId string, RR string, currentIPAddress string, aliDNSConfigRecord configs.AliDNS) (bool, error) {
-	config, err := configs.Get()
+func updateAliDNSRecord(recordId string, RR string, currentIPAddress string, aliDNSConfigRecord common.AliDNS) (bool, error) {
+	config, err := common.GetConfig()
 	if err != nil {
 		return false, err
 	}
@@ -202,7 +201,7 @@ func updateAliDNSRecord(recordId string, RR string, currentIPAddress string, ali
 		param,
 	)
 
-	log.Printf(constants.MsgFormatUpdatingDNS, recordId, currentIPAddress)
+	log.Printf(common.MsgFormatUpdatingDNS, recordId, currentIPAddress)
 
 	httpClient := &http.Client{}
 	response, err := httpClient.Do(request)
@@ -221,7 +220,7 @@ func updateAliDNSRecord(recordId string, RR string, currentIPAddress string, ali
 			err := response.Body.Close()
 
 			if err != nil {
-				log.Errorln(constants.ErrCloseHTTPConnectionFail, err)
+				log.Errorln(common.ErrCloseHTTPConnectionFail, err)
 			}
 		}()
 		if err != nil {

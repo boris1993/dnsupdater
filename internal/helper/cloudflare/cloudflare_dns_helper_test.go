@@ -2,7 +2,7 @@ package cloudflare
 
 import (
 	"encoding/json"
-	"github.com/boris1993/dnsupdater/internal/configs"
+	"github.com/boris1993/dnsupdater/internal/common"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
@@ -13,7 +13,7 @@ import (
 const testResourcePath = "../../test"
 
 var testHTTPServer *httptest.Server
-var config *configs.Config
+var config *common.Config
 
 var serverRecords []cfDnsRecordResult
 
@@ -96,9 +96,9 @@ func stopTestHTTPServer() {
 
 func setEndpointToTestServer() error {
 	var err error
-	configs.Path = testResourcePath + "/test_config.yaml"
+	common.ConfigFilePath = testResourcePath + "/test_config.yaml"
 
-	config, err = configs.Get()
+	config, err = common.GetConfig()
 	if err != nil {
 		return err
 	}
