@@ -28,7 +28,10 @@ func testGetSuccess(t *testing.T) {
 		return
 	}
 
-	if config.System.IPAddrAPI == "" || config.System.CloudFlareAPIEndpoint == "" || config.System.AliyunAPIEndpoint == "" {
+	if config.System.IPAddrAPI == "" ||
+		config.System.IPv6AddrAPI == "" ||
+		config.System.CloudFlareAPIEndpoint == "" ||
+		config.System.AliyunAPIEndpoint == "" {
 		t.Errorf("Content empty in the System part of test_config.yaml")
 		return
 	}
