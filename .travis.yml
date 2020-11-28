@@ -41,4 +41,3 @@ deploy:
     on:
       repo: boris1993/dnsupdater
       tags: true
-      condition: $TRAVIS_TAG =~ "^v[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+$"
