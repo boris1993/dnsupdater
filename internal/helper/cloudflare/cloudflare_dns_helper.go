@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/boris1993/dnsupdater/internal/common"
+	"github.com/boris1993/dnsupdater/internal/conf"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
@@ -13,7 +14,7 @@ import (
 // ProcessRecords takes the configuration as well as the current IP address,
 // then check and update each DNS record in CloudFlare
 func ProcessRecords(currentIPv4Address string, currentIPv6Address string) error {
-	config, err := common.GetConfig()
+	config, err := conf.GetConfig()
 	if err != nil {
 		return err
 	}
@@ -104,8 +105,8 @@ func ProcessRecords(currentIPv4Address string, currentIPv6Address string) error 
 // The first value returned is the ID of this DNS record,
 // the second value returned is the IP address of this record,
 // or an error will be returned if any error occurs.
-func getCFDnsRecordIpAddress(cloudFlareRecord common.CloudFlare) (string, string, error) {
-	config, err := common.GetConfig()
+func getCFDnsRecordIpAddress(cloudFlareRecord conf.CloudFlare) (string, string, error) {
+	config, err := conf.GetConfig()
 	if err != nil {
 		return "", "", err
 	}
@@ -191,8 +192,8 @@ func getCFDnsRecordIpAddress(cloudFlareRecord common.CloudFlare) (string, string
 //
 // The return value is the status(true or false) of the update process,
 // or an error will be returned if any error occurs.
-func updateCFDNSRecord(id string, address string, cloudFlareRecord common.CloudFlare) (bool, error) {
-	config, err := common.GetConfig()
+func updateCFDNSRecord(id string, address string, cloudFlareRecord conf.CloudFlare) (bool, error) {
+	config, err := conf.GetConfig()
 	if err != nil {
 		return false, err
 	}

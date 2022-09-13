@@ -2,7 +2,7 @@ package aliyun
 
 import (
 	"encoding/json"
-	"github.com/boris1993/dnsupdater/internal/common"
+	"github.com/boris1993/dnsupdater/internal/conf"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
@@ -13,7 +13,7 @@ import (
 const testResourcePath = "../../test"
 
 var testHTTPServer *httptest.Server
-var config *common.Config
+var config *conf.Config
 
 var serverRecords []AliDNSRecord
 
@@ -86,9 +86,9 @@ func stopTestHTTPServer() {
 
 func setEndpointToTestServer() error {
 	var err error
-	common.ConfigFilePath = testResourcePath + "/test_config.yaml"
+	conf.ConfigFilePath = testResourcePath + "/test_config.yaml"
 
-	config, err = common.GetConfig()
+	config, err = conf.GetConfig()
 	if err != nil {
 		return err
 	}

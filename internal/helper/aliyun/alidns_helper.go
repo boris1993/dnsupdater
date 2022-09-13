@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/boris1993/dnsupdater/internal/common"
+	"github.com/boris1993/dnsupdater/internal/conf"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
@@ -13,7 +14,7 @@ import (
 // ProcessRecords takes the configuration as well as the current IP address
 // then check and update each DNS record in Aliyun DNS
 func ProcessRecords(currentIPv4Address string, currentIPv6Address string) error {
-	config, err := common.GetConfig()
+	config, err := conf.GetConfig()
 	if err != nil {
 		return err
 	}
@@ -93,8 +94,8 @@ func ProcessRecords(currentIPv4Address string, currentIPv6Address string) error 
 // getDomainRecordID fetches the information of the specified record.
 //
 // See document: https://help.aliyun.com/document_detail/29776.html?spm=a2c4g.11186623.2.37.1de5425696HU8m#h2-u8FD4u56DEu53C2u65703
-func getDomainRecordID(aliDNSConfigRecord common.AliDNS) (recordId string, recordAddress string, err error) {
-	config, err := common.GetConfig()
+func getDomainRecordID(aliDNSConfigRecord conf.AliDNS) (recordId string, recordAddress string, err error) {
+	config, err := conf.GetConfig()
 	if err != nil {
 		return "", "", err
 	}
@@ -181,8 +182,8 @@ func getDomainRecordID(aliDNSConfigRecord common.AliDNS) (recordId string, recor
 // Updates the IP address of the specified domain.
 //
 // See document: https://help.aliyun.com/document_detail/29774.html?spm=a2c4g.11186623.2.35.1de5425696HU8m
-func updateAliDNSRecord(recordId string, RR string, currentIPAddress string, aliDNSConfigRecord common.AliDNS) (bool, error) {
-	config, err := common.GetConfig()
+func updateAliDNSRecord(recordId string, RR string, currentIPAddress string, aliDNSConfigRecord conf.AliDNS) (bool, error) {
+	config, err := conf.GetConfig()
 	if err != nil {
 		return false, err
 	}
