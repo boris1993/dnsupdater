@@ -23,7 +23,13 @@ jobs:
           cache: true
 
       - name: Test
-        run: go test ./internal/...
+        run: go test -json -coverprofile=coverage.out ./internal/...
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   build:
     name: Build
