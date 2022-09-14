@@ -37,9 +37,9 @@ jobs:
         cache: true
     
     - name: Set environment variables
-      run: export ${{ matrix.build_args }}
+      run: echo ${{ matrix.build_args }} >> $GITHUB_ENV
     
-    - run: echo ${GOARCH} && echo ${GOOS}
+    - run: echo ${{ env.GOARCH }} && echo ${{ env.GOOS }}
     
     - name: Test
       run: go test -v ./internal/...
