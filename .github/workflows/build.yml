@@ -72,7 +72,7 @@ jobs:
           
           cd bin
           if [ "${{ env.GOOS }}" == "windows" ]; then
-            zip -r ${ARCHIVE_FILE_NAME}.zip ${ARTIFACT_TARGET_FOLDER}
+            zip -r ${ARTIFACT_TARGET_FOLDER}.zip ${ARTIFACT_TARGET_FOLDER}
           else
             tar cvzf ${ARTIFACT_TARGET_FOLDER}.tar.gz ${ARTIFACT_TARGET_FOLDER}
           fi
