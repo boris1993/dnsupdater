@@ -1,0 +1,36 @@
+name: Unit Test And Code Analysis
+
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - .github/**
+  pull_request:
+    paths-ignore:
+      - .github/**
+  workflow_dispatch:
+
+jobs:
+  unit_test:
+    name: Unit Test
+    runs-on: ubuntu-latest
+    env:
+      GO111MODULE: 'on'
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          check-latest: true
+          cache: true
+
+      - name: Test
+        run: go test -coverprofile=coverage.out ./internal/...
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
