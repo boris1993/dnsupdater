@@ -34,9 +34,6 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    # Build only when the unit tests passed
-    needs:
-      - unit_test
     strategy:
       matrix:
         target_platforms:
