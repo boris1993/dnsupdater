@@ -70,8 +70,10 @@ jobs:
           
           export ARTIFACT_TARGET_FOLDER=dnsupdater-${GOOS}-${GOARCH}
           if [ "${{ env.GOMIPS }}" ]; then
-            ARTIFACT_TARGET_FOLDER=${ARTIFACT_TARGET_FOLDER}-${{ env.GOMIPS }}
+            ARTIFACT_TARGET_FOLDER+="-${{ env.GOMIPS }}"
           fi
           
+          echo "${ARTIFACT_TARGET_FOLDER}"
+          
           go build -o ./bin/${ARTIFACT_TARGET_FOLDER}/${EXECUTABLE_NAME} ./cmd/dnsupdater/main.go
-          cp ./configs/config.yaml.template ./bin/dnsupdater-${GOOS}-${GOARCH}/
+          cp ./configs/config.yaml.template ./bin/${ARTIFACT_TARGET_FOLDER}/config.yaml.template
