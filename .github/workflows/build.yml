@@ -9,6 +9,7 @@ on:
 
 jobs:
   unit_test:
+    name: Unit Test
     runs-on: ubuntu-latest
     env:
       GO111MODULE: 'on'
@@ -25,7 +26,11 @@ jobs:
         run: go test -v ./internal/...
 
   build:
+    name: Build
     runs-on: ubuntu-latest
+    # Build only when the unit tests passed
+    needs:
+      - unit_test
     strategy:
       matrix:
         target_platforms:
@@ -42,26 +47,26 @@ jobs:
     env:
       GO111MODULE: 'on'
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Set up Go
-      uses: actions/setup-go@v3
-      with:
-        check-latest: true
-        cache: true
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          check-latest: true
+          cache: true
 
-    - name: Set environment variables
-      run: >-
-        for i in ${{ matrix.target_platforms }}; do
-          echo ${i} >> $GITHUB_ENV
-        done    
+      - name: Set environment variables
+        run: >-
+          for i in ${{ matrix.target_platforms }}; do
+            echo ${i} >> $GITHUB_ENV
+          done    
 
-    - name: Build
-      run: >-
-        if [ ${{ env.GOOS }} == "windows" ]; then
-          export EXECUTABLE_NAME = dnsupdater.exe
-        else
-          export EXECUTABLE_NAME = dnsupdater
-        fi
-        
-        go build -v -o ./bin/dnsupdater-${GOOS}-${GOARCH}/${EXECUTABLE_NAME} ./cmd/dnsupdater/main.go
+      - name: Build
+        run: >-
+          if [ "${{ env.GOOS }}" == "windows" ]; then
+            export EXECUTABLE_NAME = dnsupdater.exe
+          else
+            export EXECUTABLE_NAME = dnsupdater
+          fi
+          
+          go build -v -o ./bin/dnsupdater-${GOOS}-${GOARCH}/${EXECUTABLE_NAME} ./cmd/dnsupdater/main.go
