@@ -23,7 +23,7 @@ jobs:
           cache: true
 
       - name: Test
-        run: go test -json -coverprofile=coverage.out ./internal/...
+        run: go test -coverprofile=coverage.out ./internal/...
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
