@@ -26,7 +26,8 @@ jobs:
           - GOARCH=mips64le GOOS=linux
           - GOARCH=riscv64 GOOS=linux
     env:
-      APP_NAME: dnsupdater
+      APP_NAME: 'dnsupdater'
+      GO111MODULE: 'on'
     steps:
     - uses: actions/checkout@v3
 
@@ -35,7 +36,10 @@ jobs:
       with:
         check-latest: true
         cache: true
-        
+    
+    - run: pwd
+    - run: ls
+    
     - name: Test
       run: go test -v ./internal/...
       
