@@ -1,6 +1,5 @@
 # dnsupdater
-[![Build Status](https://travis-ci.com/boris1993/dnsupdater.svg?branch=master)](https://travis-ci.com/boris1993/dnsupdater)
-![GitHub](https://img.shields.io/github/license/boris1993/dnsupdater)
+[![Build](https://github.com/boris1993/dnsupdater/actions/workflows/build.yml/badge.svg)](https://github.com/boris1993/dnsupdater/actions/workflows/build.yml)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/boris1993/dnsupdater)](https://github.com/boris1993/dnsupdater/releases/latest)
 ![Total download](https://img.shields.io/github/downloads/boris1993/dnsupdater/total.svg)
 
