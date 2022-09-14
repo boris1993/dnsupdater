@@ -36,7 +36,7 @@ func testGetSuccess(t *testing.T) {
 		return
 	}
 
-	if len(config.CloudFlareRecords) != 4 {
+	if len(config.CloudFlareRecords) != 6 {
 		t.Errorf("Error reading the CloudFlareRecords part. Expected 4 records but found %d", len(config.CloudFlareRecords))
 		return
 	}

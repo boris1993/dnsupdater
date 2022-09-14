@@ -29,7 +29,6 @@ func ProcessRecords(currentIPv4Address string, currentIPv6Address string) error 
 	for _, cloudFlareRecord := range config.CloudFlareRecords {
 
 		if cloudFlareRecord.APIKey == "" ||
-			cloudFlareRecord.AuthEmail == "" ||
 			cloudFlareRecord.DomainName == "" ||
 			cloudFlareRecord.ZoneID == "" ||
 			cloudFlareRecord.DomainType == "" {
@@ -127,9 +126,7 @@ func getCFDnsRecordIpAddress(cloudFlareRecord conf.CloudFlare) (string, string, 
 
 	log.Debug("Request URI: \n" + req.URL.String())
 
-	req.Header.Add("X-Auth-Email", cloudFlareRecord.AuthEmail)
-	req.Header.Add("Authorization", "Bearer "+cloudFlareRecord.APIKey)
-	req.Header.Add("Content-Type", "application/json")
+	composeRequestHeader(req, cloudFlareRecord)
 
 	log.Println(common.MsgHeaderFetchingIPOfDomain, cloudFlareRecord.DomainName)
 
@@ -218,9 +215,7 @@ func updateCFDNSRecord(id string, address string, cloudFlareRecord conf.CloudFla
 		return false, err
 	}
 
-	req.Header.Add("X-Auth-Email", cloudFlareRecord.AuthEmail)
-	req.Header.Add("Authorization", "Bearer "+cloudFlareRecord.APIKey)
-	req.Header.Add("Content-Type", "application/json")
+	composeRequestHeader(req, cloudFlareRecord)
 
 	log.Printf(common.MsgFormatUpdatingDNS, cloudFlareRecord.DomainName, address)
 
@@ -256,4 +251,13 @@ func updateCFDNSRecord(id string, address string, cloudFlareRecord conf.CloudFla
 	}
 
 	return dnsRecord.Success, nil
+}
+
+func composeRequestHeader(req *http.Request, cloudFlareRecord conf.CloudFlare) {
+	req.Header.Add("Authorization", "Bearer "+cloudFlareRecord.APIKey)
+	req.Header.Add("Content-Type", "application/json")
+
+	if cloudFlareRecord.AuthEmail != "" {
+		req.Header.Add("X-Auth-Email", cloudFlareRecord.AuthEmail)
+	}
 }
