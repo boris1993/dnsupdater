@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        build_args: 
+        target_platforms:
           - GOARCH=amd64 GOOS=windows
           #- GOARCH=amd64 GOOS=darwin
           #- GOARCH=amd64 GOOS=linux
@@ -37,8 +37,11 @@ jobs:
         cache: true
     
     - name: Set environment variables
-      run: echo ${{ matrix.build_args }} >> $GITHUB_ENV
-    
+      run: >-
+        for i in ${{ matrix.target_platforms }}; do
+          echo ${i} >> $GITHUB_ENV
+        done
+
     - run: echo ${{ env.GOARCH }} && echo ${{ env.GOOS }}
     
     - name: Test
@@ -52,4 +55,4 @@ jobs:
           export EXECUTABLE_NAME = dnsupdater
         fi
         
-        go build -v -o ./bin/dnsupdater-${GOOS}-${GOARCH}/${EXECUTABLE_NAME} ./cmd/dnsupdater/main.go
+        ${{ env.GOARCH }} ${{ env.GOOS }} go build -v -o ./bin/dnsupdater-${GOOS}-${GOARCH}/${EXECUTABLE_NAME} ./cmd/dnsupdater/main.go
