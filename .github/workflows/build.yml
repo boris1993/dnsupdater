@@ -26,7 +26,6 @@ jobs:
           #- GOARCH=mips64le GOOS=linux
           #- GOARCH=riscv64 GOOS=linux
     env:
-      APP_NAME: 'dnsupdater'
       GO111MODULE: 'on'
     steps:
     - uses: actions/checkout@v3
@@ -40,8 +39,17 @@ jobs:
     - name: Set environment variables
       run: export ${{ matrix.build_args }}
     
+    - run: echo ${GOARCH} && echo ${GOOS}
+    
     - name: Test
       run: go test -v ./internal/...
       
     - name: Build
-      run:  go build -v -o ./bin/${APP_NAME}-${}
+      run: >-
+        if [ ${GOOS} == "windows" ]; then
+          export EXECUTABLE_NAME = dnsupdater.exe
+        else
+          export EXECUTABLE_NAME = dnsupdater
+        fi
+        
+        go build -v -o ./bin/dnsupdater-${GOOS}-${GOARCH}/${EXECUTABLE_NAME} ./cmd/dnsupdater/main.go
