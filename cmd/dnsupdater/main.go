@@ -4,6 +4,7 @@ import (
 	"errors"
 	"flag"
 	"github.com/boris1993/dnsupdater/internal/common"
+	"github.com/boris1993/dnsupdater/internal/conf"
 	"github.com/boris1993/dnsupdater/internal/helper/aliyun"
 	"github.com/boris1993/dnsupdater/internal/helper/cloudflare"
 	log "github.com/sirupsen/logrus"
@@ -15,7 +16,7 @@ import (
 func main() {
 	var err error
 
-	config, err := common.GetConfig()
+	config, err := conf.GetConfig()
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -59,14 +60,14 @@ func main() {
 }
 
 func init() {
-	flag.StringVar(&common.ConfigFilePath, "config", "", "Path to the config file.")
-	flag.BoolVar(&common.Debug, "debug", false, "Enable debug logging.")
+	flag.StringVar(&conf.ConfigFilePath, "config", "", "Path to the config file.")
+	flag.BoolVar(&conf.Debug, "debug", false, "Enable debug logging.")
 
 	flag.Parse()
 
 	log.SetFormatter(&log.TextFormatter{DisableLevelTruncation: true})
 
-	if common.Debug == true {
+	if conf.Debug == true {
 		log.SetLevel(log.DebugLevel)
 	} else {
 		log.SetLevel(log.InfoLevel)
@@ -74,7 +75,7 @@ func init() {
 }
 
 // getCurrentIPv4Address returns the external IP address for your network.
-func getCurrentIPv4Address(config common.Config) (string, error) {
+func getCurrentIPv4Address(config conf.Config) (string, error) {
 	if config.System.IPAddrAPI == "" {
 		return "", errors.New(common.ErrIPAddressFetchingAPIEmpty)
 	}
@@ -112,7 +113,7 @@ func getCurrentIPv4Address(config common.Config) (string, error) {
 
 // getCurrentIPv6Address returns the external IPv6 address for your network.
 // Typically this should be your "temporary" IPv6 address.
-func getCurrentIPv6Address(config common.Config) (string, error) {
+func getCurrentIPv6Address(config conf.Config) (string, error) {
 	if config.System.IPv6AddrAPI == "" {
 		return "", errors.New(common.ErrIPAddressFetchingAPIEmpty)
 	}

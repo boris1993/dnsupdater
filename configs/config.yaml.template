@@ -5,14 +5,14 @@ System:
   CloudFlareAPIEndpoint: "https://api.cloudflare.com/client/v4"
   AliyunAPIEndpoint: "https://alidns.aliyuncs.com"
 CloudFlareRecords:
-  - APIKey: "YOUR_CLOUDFLARE_API_KEY"
+  - APIKey: "YOUR_CLOUDFLARE_API_TOKEN"
     ZoneID: "ZONE_ID_OF_YOUR_DOMAIN"
-    AuthEmail: "EMAIL_FOR_LOGGING_INTO_CLOUDFLARE"
+    AuthEmail: "EMAIL_FOR_LOGGING_INTO_CLOUDFLARE" # Optional. Only required when you are using the global API key
     DomainName: "FULL_DOMAIN_YOU_WANT_TO_UPDATE. e.g.:test1.example.com"
     DomainType: "A" # Type of the domain. "A" for IPv4 records and "AAAA" for IPv6 records. Case sensitive.
-  - APIKey: "YOUR_CLOUDFLARE_API_KEY"
+  - APIKey: "YOUR_CLOUDFLARE_API_TOKEN"
     ZoneID: "ZONE_ID_OF_YOUR_DOMAIN"
-    AuthEmail: "EMAIL_FOR_LOGGING_INTO_CLOUDFLARE"
+    AuthEmail: "EMAIL_FOR_LOGGING_INTO_CLOUDFLARE" # Optional. Only required when you are using the global API key
     DomainName: "FULL_DOMAIN_YOU_WANT_TO_UPDATE. e.g.:test2.example.com"
     DomainType: "AAAA" # Type of the domain. "A" for IPv4 records and "AAAA" for IPv6 records. Case sensitive.
 AliDNSRecords:

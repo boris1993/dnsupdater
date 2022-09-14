@@ -1,7 +1,8 @@
 // Package conf provides all models needed by this programme.
-package common
+package conf
 
 import (
+	"github.com/boris1993/dnsupdater/internal/common"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
@@ -79,7 +80,7 @@ func initConfig() error {
 		ConfigFilePath = filepath.Join(absPath, "config.yaml")
 	}
 
-	log.Println(MsgHeaderLoadingConfig, ConfigFilePath)
+	log.Println(common.MsgHeaderLoadingConfig, ConfigFilePath)
 
 	bytes, err := ioutil.ReadFile(ConfigFilePath)
 
