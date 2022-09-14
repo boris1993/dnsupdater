@@ -7,7 +7,7 @@ import (
 	"github.com/boris1993/dnsupdater/internal/common"
 	"github.com/boris1993/dnsupdater/internal/conf"
 	log "github.com/sirupsen/logrus"
-	"io/ioutil"
+	"io"
 	"net/http"
 )
 
@@ -135,7 +135,7 @@ func getCFDnsRecordIpAddress(cloudFlareRecord conf.CloudFlare) (string, string, 
 		return "", "", err
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", "", err
 	}
@@ -234,7 +234,7 @@ func updateCFDNSRecord(id string, address string, cloudFlareRecord conf.CloudFla
 		}
 	}()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 
 	if err != nil {
 		return false, err
@@ -259,5 +259,7 @@ func composeRequestHeader(req *http.Request, cloudFlareRecord conf.CloudFlare) {
 
 	if cloudFlareRecord.AuthEmail != "" {
 		req.Header.Add("X-Auth-Email", cloudFlareRecord.AuthEmail)
+
+		log.Warn(common.WarnAuthEmailDeprecated)
 	}
 }

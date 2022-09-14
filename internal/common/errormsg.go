@@ -1,4 +1,4 @@
-// Package constants contains all constants needed in this programme
+// Package common contains all constants needed in this programme
 package common
 
 const MsgHeaderDNSRecordUpdateSuccessful = "Successfully updated the DNS record"
@@ -31,3 +31,5 @@ const ErrCloudFlareAPIAddressEmpty = "CloudFlare API endpoint address cannot be 
 const ErrAliyunAPIAddressEmpty = "Aliyun API endpoint address cannot be empty"
 const ErrCloudFlareRecordConfigIncomplete = "Incomplete CloudFlare configuration found"
 const ErrAliDNSRecordConfigIncomplete = "Incomplete Aliyun DNS configuration found"
+
+const WarnAuthEmailDeprecated = "AuthEmail is deprecated. Please use dedicated API token if you are still using Global API Key."
