@@ -16,15 +16,15 @@ jobs:
       matrix:
         build_args: 
           - GOARCH=amd64 GOOS=windows
-          - GOARCH=amd64 GOOS=darwin
-          - GOARCH=amd64 GOOS=linux
-          - GOARCH=arm GOOS=linux
-          - GOARCH=arm64 GOOS=linux
-          - GOARCH=mips GOMIPS=softfloat GOOS=linux 
-          - GOARCH=mipsle GOOS=linux
-          - GOARCH=mips64 GOOS=linux
-          - GOARCH=mips64le GOOS=linux
-          - GOARCH=riscv64 GOOS=linux
+          #- GOARCH=amd64 GOOS=darwin
+          #- GOARCH=amd64 GOOS=linux
+          #- GOARCH=arm GOOS=linux
+          #- GOARCH=arm64 GOOS=linux
+          #- GOARCH=mips GOMIPS=softfloat GOOS=linux 
+          #- GOARCH=mipsle GOOS=linux
+          #- GOARCH=mips64 GOOS=linux
+          #- GOARCH=mips64le GOOS=linux
+          #- GOARCH=riscv64 GOOS=linux
     env:
       APP_NAME: 'dnsupdater'
       GO111MODULE: 'on'
@@ -37,13 +37,11 @@ jobs:
         check-latest: true
         cache: true
     
-    - run: pwd
-    - run: ls
+    - name: Set environment variables
+      run: export ${{ matrix.build_args }}
     
     - name: Test
       run: go test -v ./internal/...
       
     - name: Build
-      run:  ${{ matrix.build_args }} go build -v
-
-
+      run:  go build -v -o ./bin/${APP_NAME}-${}
