@@ -55,3 +55,26 @@ jobs:
           
           go build -o ./bin/${ARTIFACT_TARGET_FOLDER}/${EXECUTABLE_NAME} ./cmd/dnsupdater/main.go
           cp ./configs/config.yaml.template ./bin/${ARTIFACT_TARGET_FOLDER}/config.yaml.template
+
+      - name: Archive files
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          export ARTIFACT_TARGET_FOLDER=dnsupdater-${GOOS}-${GOARCH}
+          if [ "${{ env.GOMIPS }}" ]; then
+            ARTIFACT_TARGET_FOLDER+="-${{ env.GOMIPS }}"
+          fi
+          
+          cd bin
+          if [ "${{ env.GOOS }}" == "windows" ]; then
+            zip -r ${ARCHIVE_FILE_NAME}.zip ${ARTIFACT_TARGET_FOLDER}
+          else
+            tar cvzf ${ARTIFACT_TARGET_FOLDER}.tar.gz ${ARTIFACT_TARGET_FOLDER}
+          fi
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            ./bin/*.zip
+            ./bin/*.tar.gz
