@@ -62,7 +62,7 @@ jobs:
           done    
 
       - name: Build
-        run: >-
+        run: |
           if [ "${{ env.GOOS }}" == "windows" ]; then
             export EXECUTABLE_NAME=dnsupdater.exe
           else
@@ -70,7 +70,7 @@ jobs:
           fi
           
           export ARTIFACT_TARGET_FOLDER=dnsupdater-${GOOS}-${GOARCH}
-          if [ ${{ env.GOMIPS }} ]; then
+          if [ "${{ env.GOMIPS }}" ]; then
             ARTIFACT_TARGET_FOLDER=${ARTIFACT_TARGET_FOLDER}-${{ env.GOMIPS }}
           fi
           
