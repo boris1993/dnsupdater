@@ -76,6 +76,8 @@ jobs:
           else
             tar cvzf ${ARTIFACT_TARGET_FOLDER}.tar.gz ${ARTIFACT_TARGET_FOLDER}
           fi
+          
+          ls
 
       - name: Release
         uses: softprops/action-gh-release@v1
