@@ -23,7 +23,7 @@ jobs:
           cache: true
 
       - name: Test
-        run: go test -v ./internal/...
+        run: go test ./internal/...
 
   build:
     name: Build
@@ -35,15 +35,15 @@ jobs:
       matrix:
         target_platforms:
           - GOARCH=amd64 GOOS=windows
-          #- GOARCH=amd64 GOOS=darwin
-          #- GOARCH=amd64 GOOS=linux
-          #- GOARCH=arm GOOS=linux
-          #- GOARCH=arm64 GOOS=linux
-          #- GOARCH=mips GOMIPS=softfloat GOOS=linux 
-          #- GOARCH=mipsle GOOS=linux
-          #- GOARCH=mips64 GOOS=linux
-          #- GOARCH=mips64le GOOS=linux
-          #- GOARCH=riscv64 GOOS=linux
+          - GOARCH=amd64 GOOS=darwin
+          - GOARCH=amd64 GOOS=linux
+          - GOARCH=arm GOOS=linux
+          - GOARCH=arm64 GOOS=linux
+          - GOARCH=mips GOMIPS=softfloat GOOS=linux
+          - GOARCH=mipsle GOOS=linux
+          - GOARCH=mips64 GOOS=linux
+          - GOARCH=mips64le GOOS=linux
+          - GOARCH=riscv64 GOOS=linux
     env:
       GO111MODULE: 'on'
     steps:
@@ -69,6 +69,10 @@ jobs:
             export EXECUTABLE_NAME=dnsupdater
           fi
           
-          go build -v -o ./bin/dnsupdater-${GOOS}-${GOARCH}/${EXECUTABLE_NAME} ./cmd/dnsupdater/main.go
-
-      - run: ls ./bin
+          export ARTIFACT_TARGET_FOLDER=dnsupdater-${GOOS}-${GOARCH}
+          if [ ${{ env.GOMIPS }} ]; then
+            ARTIFACT_TARGET_FOLDER=${ARTIFACT_TARGET_FOLDER}-${{ env.GOMIPS }}
+          fi
+          
+          go build -o ./bin/${ARTIFACT_TARGET_FOLDER}/${EXECUTABLE_NAME} ./cmd/dnsupdater/main.go
+          cp ./configs/config.yaml.template ./bin/dnsupdater-${GOOS}-${GOARCH}/
