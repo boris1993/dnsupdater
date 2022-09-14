@@ -2,19 +2,44 @@ name: Unit test and build
 
 on:
   workflow_dispatch:
+  #push:
+  #  branches: [ "master" ]
+  #pull_request:
+  #  branches: [ "master" ]
+
+
 
 jobs:
-  unit_test:
-    name: Unit test
+  build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        build_args: 
+          - GOARCH=amd64 GOOS=windows
+          - GOARCH=amd64 GOOS=darwin
+          - GOARCH=amd64 GOOS=linux
+          - GOARCH=arm GOOS=linux
+          - GOARCH=arm64 GOOS=linux
+          - GOARCH=mips GOMIPS=softfloat GOOS=linux 
+          - GOARCH=mipsle GOOS=linux
+          - GOARCH=mips64 GOOS=linux
+          - GOARCH=mips64le GOOS=linux
+          - GOARCH=riscv64 GOOS=linux
+    env:
+      APP_NAME: dnsupdater
     steps:
-      - uses: actions/checkout@v3
+    - uses: actions/checkout@v3
 
-      - name: Setup GO SDK
-        uses: actions/setup-go@v3
-        with:
-          check-latest: true
-          cache: true
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        check-latest: true
+        cache: true
+        
+    - name: Test
+      run: go test -v ./internal/...
+      
+    - name: Build
+      run:  ${{ matrix.build_args }} go build -v
 
-      - name: Run unit test
-        run: go test -json ./internal/...
+
