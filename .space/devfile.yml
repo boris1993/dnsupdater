@@ -1,0 +1,8 @@
+schemaVersion: 2.2.0
+metadata:
+  name: Default environment
+attributes:
+  space:
+    instanceType: regular
+    editor:
+      type: GoLand
