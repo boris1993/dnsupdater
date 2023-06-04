@@ -1,4 +1,5 @@
 # dnsupdater
+
 [![Build](https://github.com/boris1993/dnsupdater/actions/workflows/build.yml/badge.svg)](https://github.com/boris1993/dnsupdater/actions/workflows/build.yml)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/boris1993/dnsupdater)](https://github.com/boris1993/dnsupdater/releases/latest)
 ![Total download](https://img.shields.io/github/downloads/boris1993/dnsupdater/total.svg)
@@ -32,12 +33,37 @@
 ## 配置要点
 
 + CloudFlare配置中的`APIKey`必须是一个单独的API令牌。
-你可以在 [这里](https://dash.cloudflare.com/profile/api-tokens) 通过套用`编辑区域 DNS`这个模版来生成。
+  你可以在 [这里](https://dash.cloudflare.com/profile/api-tokens) 通过套用`编辑区域 DNS`这个模版来生成。
 
 + 切勿修改阿里云配置中的`RegionID`。目前阿里云仅接受`cn-hangzhou`这一个值。
 
-+ 如果你想要禁用更新IPv6记录这个功能，那么你可以删掉配置文件中的`IPv6AddrAPI`属性。
-如果你的网络不支持IPv6，那么你也需要删掉这个配置。否则你将会在日志中看到一条警告信息。
++ 关于 JSON path
+
+如下为JSON Path使用的操作符:
+
+| 操作符                     | 描述               |
+|:------------------------|:-----------------|
+| `$`                     | 根元素，所有表达式都应以此为开始 |
+| `@`                     | 当前元素             |
+| `*`                     | 通配符，用来匹配下级元素     |
+| `..`                    | 递归匹配所有子元素        |
+| `.<元素名>`                | 通过元素名匹配单个子元素     |
+| `['<元素名>' (, '<元素名>')]` | 通过元素名匹配单个或多个子元素  |
+| `[<下标> (, <下标>)]`       | 匹配数组指定下标的元素      |
+| `[起始:末尾]`               | 取数组的切片           |
+| `[?(<表达式>)]`            | 过滤表达式            |
+
+假设你得到了这样的一个JSON:
+
+```json
+
+{
+  "ip": "103.156.184.21",
+  "tz": "Asia/Taipei"
+}
+```
+
+那么就可以用表达式 `$.ip` 来取到 `ip` 这个元素的值。
 
 ## 为其他平台构建可执行文件
 

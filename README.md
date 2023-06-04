@@ -38,8 +38,33 @@ You can generate one [here](https://dash.cloudflare.com/profile/api-tokens) with
 
 + Do not modify the property `RegionID` for your Aliyun DNS records. `cn-hangzhou` is the only accepted value for now. 
 
-+ You can remove the property `IPv6AddrAPI` if you want to fully disable updating IPv6 records.
-You should also do this when you don't have IPv6 internet access. Otherwise, you'll see a warning in the log. 
++ About JSON path
+
+Here's a list of operators used in JSON path:
+
+| Operator                  | Description                                                     |
+|:--------------------------|:----------------------------------------------------------------|
+| `$`                       | The root element to query. This starts all path expressions.    |
+| `@`                       | The current node being processed by a filter predicate.         |
+| `*`                       | Wildcard. Available anywhere a name or numeric are required.    |
+| `..`                      | Deep scan. Available anywhere a name is required.               |
+| `.<name>`                 | Dot-notated child                                               |
+| `['<name>' (, '<name>')]` | Bracket-notated child or children                               |
+| `[<number> (, <number>)]` | Array index or indexes                                          |
+| `[start:end]`             | Array slice operator                                            |
+| `[?(<expression>)]`       | Filter expression. Expression must evaluate to a boolean value. |
+
+So if you have a JSON like this:
+
+```json
+
+{
+  "ip": "103.156.184.21",
+  "tz": "Asia/Taipei"
+}
+```
+
+You can use `$.ip` to obtain the value in the field `ip`.
 
 ## Build for other platforms
 
