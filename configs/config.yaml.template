@@ -2,7 +2,7 @@
 System:
   IPv4:
     Enabled: true
-    IPAddrAPI: "https://v4.ident.me/json"
+    IPAddrAPI: "https://v4.ident.me/"
     ResponseType: "text"
     IPAddrJsonPath: ""
   IPv6:
