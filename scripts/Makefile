@@ -4,7 +4,7 @@ GOBUILD=$(GOCMD) build
 GOTEST=$(GOCMD) test
 GOTEST_ARGS=-coverprofile=coverage.out
 
-BUILD_ARGS=-i
+BUILD_ARGS=
 
 APP_NAME=dnsupdater
 
