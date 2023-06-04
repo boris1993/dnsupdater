@@ -3,23 +3,27 @@ package aliyun
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/boris1993/dnsupdater/internal/common"
 	"github.com/boris1993/dnsupdater/internal/conf"
 	log "github.com/sirupsen/logrus"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 )
 
+type AliyunDDNSHandler struct {
+}
+
 // ProcessRecords takes the configuration as well as the current IP address
 // then check and update each DNS record in Aliyun DNS
-func ProcessRecords(currentIPv4Address string, currentIPv6Address string) error {
+func (_ AliyunDDNSHandler) ProcessRecords(currentIPv4Address string, currentIPv6Address string) error {
 	config, err := conf.GetConfig()
 	if err != nil {
 		return err
 	}
 
-	if config.System.AliyunAPIEndpoint == "" {
+	if config.System.Endpoints.AliyunAPIEndpoint == "" {
 		return errors.New(common.ErrAliyunAPIAddressEmpty)
 	}
 
@@ -41,19 +45,7 @@ func ProcessRecords(currentIPv4Address string, currentIPv6Address string) error 
 			continue
 		}
 
-		log.Println(common.MsgHeaderDomainProcessing, aliDNSRecord.DomainName)
-
-		recordId, recordIP, err := getDomainRecordID(aliDNSRecord)
-		if err != nil {
-			log.Errorln(err)
-			continue
-		}
-
-		if (aliDNSRecord.DomainType == "A" && common.CompareAddresses(currentIPv4Address, recordIP)) ||
-			(aliDNSRecord.DomainType == "AAAA" && common.CompareAddresses(currentIPv6Address, recordIP)) {
-			log.Println(common.MsgIPAddrNotChanged)
-			continue
-		}
+		log.Println(fmt.Sprintf(common.MsgTemplateDomainProcessing, aliDNSRecord.DomainName, aliDNSRecord.DomainType))
 
 		domainNameParts := strings.Split(aliDNSRecord.DomainName, ".")
 		// Remove the TLD and the domain, what's rest are the host record
@@ -62,13 +54,48 @@ func ProcessRecords(currentIPv4Address string, currentIPv6Address string) error 
 		var status bool
 		switch aliDNSRecord.DomainType {
 		case "A":
+			if !config.System.IPv4.Enabled {
+				log.Info(common.MsgIPv4Disabled)
+				continue
+			}
+
+			if currentIPv4Address == "" {
+				log.Info(common.MsgIPv4AddrNotAvailable)
+				continue
+			}
+
+			recordId, recordIP, err := getDomainRecordID(aliDNSRecord)
+			if err != nil {
+				log.Errorln(err)
+				continue
+			}
+
+			if common.CompareAddresses(currentIPv4Address, recordIP) {
+				log.Println(common.MsgIPAddrNotChanged)
+				continue
+			}
+
 			status, err = updateAliDNSRecord(recordId, hostRecord, currentIPv4Address, aliDNSRecord)
 			break
 		case "AAAA":
-			// If there's no valid IPv6 internet address,
-			// then skip updating this record and head to the next one
+			if !config.System.IPv6.Enabled {
+				log.Info(common.MsgIPv6Disabled)
+				continue
+			}
+
 			if currentIPv6Address == "" {
 				log.Info(common.MsgIPv6AddrNotAvailable)
+				continue
+			}
+
+			recordId, recordIP, err := getDomainRecordID(aliDNSRecord)
+			if err != nil {
+				log.Errorln(err)
+				continue
+			}
+
+			if common.CompareAddresses(currentIPv6Address, recordIP) {
+				log.Println(common.MsgIPAddrNotChanged)
 				continue
 			}
 
@@ -113,7 +140,7 @@ func getDomainRecordID(aliDNSConfigRecord conf.AliDNS) (recordId string, recordA
 	param[QueryParamType] = aliDNSConfigRecord.DomainType
 
 	request, err := BuildAliDNSRequest(
-		config.System.AliyunAPIEndpoint,
+		config.System.Endpoints.AliyunAPIEndpoint,
 		aliDNSConfigRecord.AccessKeyID,
 		aliDNSConfigRecord.AccessKeySecret,
 		ActionDescribeDomainRecords,
@@ -128,7 +155,7 @@ func getDomainRecordID(aliDNSConfigRecord conf.AliDNS) (recordId string, recordA
 		return "", "", err
 	}
 
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	defer func() {
 		err := response.Body.Close()
 
@@ -195,7 +222,7 @@ func updateAliDNSRecord(recordId string, RR string, currentIPAddress string, ali
 	param[QueryParamValue] = currentIPAddress
 
 	request, err := BuildAliDNSRequest(
-		config.System.AliyunAPIEndpoint,
+		config.System.Endpoints.AliyunAPIEndpoint,
 		aliDNSConfigRecord.AccessKeyID,
 		aliDNSConfigRecord.AccessKeySecret,
 		ActionUpdateDomainRecord,
@@ -216,7 +243,7 @@ func updateAliDNSRecord(recordId string, RR string, currentIPAddress string, ali
 	case http.StatusOK:
 		return true, nil
 	default:
-		body, err := ioutil.ReadAll(response.Body)
+		body, err := io.ReadAll(response.Body)
 		defer func() {
 			err := response.Body.Close()
 
