@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/boris1993/dnsupdater/internal/common"
 	"github.com/boris1993/dnsupdater/internal/conf"
 	log "github.com/sirupsen/logrus"
@@ -11,15 +12,18 @@ import (
 	"net/http"
 )
 
+type CloudFlareDDNSHandler struct {
+}
+
 // ProcessRecords takes the configuration as well as the current IP address,
 // then check and update each DNS record in CloudFlare
-func ProcessRecords(currentIPv4Address string, currentIPv6Address string) error {
+func (_ CloudFlareDDNSHandler) ProcessRecords(currentIPv4Address string, currentIPv6Address string) error {
 	config, err := conf.GetConfig()
 	if err != nil {
 		return err
 	}
 
-	if config.System.CloudFlareAPIEndpoint == "" {
+	if config.System.Endpoints.CloudFlareAPIEndpoint == "" {
 		return errors.New(common.ErrCloudFlareAPIAddressEmpty)
 	}
 
@@ -43,53 +47,71 @@ func ProcessRecords(currentIPv4Address string, currentIPv6Address string) error 
 		}
 
 		// Prints which record is being processed
-		log.Println(common.MsgHeaderDomainProcessing, cloudFlareRecord.DomainName)
+		log.Println(fmt.Sprintf(common.MsgTemplateDomainProcessing, cloudFlareRecord.DomainName, cloudFlareRecord.DomainType))
 
-		// Then fetch the IP address of the specified DNS record
-		id, recordAddress, err := getCFDnsRecordIpAddress(cloudFlareRecord)
+		var status bool
+		var err error
+
+		// Update the IP address when changed.
+		switch cloudFlareRecord.DomainType {
+		case "A":
+			if !config.System.IPv4.Enabled {
+				continue
+			}
+
+			if currentIPv4Address == "" {
+				log.Info(common.MsgIPv4AddrNotAvailable)
+				continue
+			}
+
+			id, recordAddress, err := getCFDnsRecordIpAddress(cloudFlareRecord)
+			if err != nil {
+				log.Errorln(err)
+				continue
+			}
+
+			if common.CompareAddresses(currentIPv4Address, recordAddress) {
+				log.Println(common.MsgIPAddrNotChanged)
+				continue
+			}
+
+			status, err = updateCFDNSRecord(id, currentIPv4Address, cloudFlareRecord)
+			break
+		case "AAAA":
+			if !config.System.IPv6.Enabled {
+				continue
+			}
+
+			if currentIPv6Address == "" {
+				log.Info(common.MsgIPv6AddrNotAvailable)
+				continue
+			}
+
+			id, recordAddress, err := getCFDnsRecordIpAddress(cloudFlareRecord)
+			if err != nil {
+				log.Errorln(err)
+				continue
+			}
+
+			if common.CompareAddresses(currentIPv6Address, recordAddress) {
+				log.Println(common.MsgIPAddrNotChanged)
+				continue
+			}
+
+			status, err = updateCFDNSRecord(id, currentIPv6Address, cloudFlareRecord)
+			break
+		}
 
 		if err != nil {
 			log.Errorln(err)
 			continue
 		}
 
-		// Do nothing when the IP address didn't change.
-		if (cloudFlareRecord.DomainType == "A" && common.CompareAddresses(currentIPv4Address, recordAddress)) ||
-			(cloudFlareRecord.DomainType == "AAAA" && common.CompareAddresses(currentIPv6Address, recordAddress)) {
-			log.Println(common.MsgIPAddrNotChanged)
+		if !status {
+			log.Errorln(common.ErrMsgHeaderUpdateDNSRecordFailed, cloudFlareRecord.DomainName)
 			continue
 		} else {
-			var status bool
-			var err error
-
-			// Update the IP address when changed.
-			switch cloudFlareRecord.DomainType {
-			case "A":
-				status, err = updateCFDNSRecord(id, currentIPv4Address, cloudFlareRecord)
-				break
-			case "AAAA":
-				// If there's no valid IPv6 internet address,
-				// then skip updating this record and head to the next one
-				if currentIPv6Address == "" {
-					log.Info(common.MsgIPv6AddrNotAvailable)
-					continue
-				}
-
-				status, err = updateCFDNSRecord(id, currentIPv6Address, cloudFlareRecord)
-				break
-			}
-
-			if err != nil {
-				log.Errorln(err)
-				continue
-			}
-
-			if !status {
-				log.Errorln(common.ErrMsgHeaderUpdateDNSRecordFailed, cloudFlareRecord.DomainName)
-				continue
-			} else {
-				log.Println(common.MsgHeaderDNSRecordUpdateSuccessful, cloudFlareRecord.DomainName)
-			}
+			log.Println(common.MsgHeaderDNSRecordUpdateSuccessful, cloudFlareRecord.DomainName)
 		}
 	}
 
@@ -110,7 +132,7 @@ func getCFDnsRecordIpAddress(cloudFlareRecord conf.CloudFlare) (string, string, 
 		return "", "", err
 	}
 
-	APIEndpoint := config.System.CloudFlareAPIEndpoint
+	APIEndpoint := config.System.Endpoints.CloudFlareAPIEndpoint
 
 	client := &http.Client{}
 
@@ -195,7 +217,7 @@ func updateCFDNSRecord(id string, address string, cloudFlareRecord conf.CloudFla
 		return false, err
 	}
 
-	APIEndpoint := config.System.CloudFlareAPIEndpoint
+	APIEndpoint := config.System.Endpoints.CloudFlareAPIEndpoint
 
 	client := &http.Client{}
 

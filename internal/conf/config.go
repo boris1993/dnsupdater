@@ -2,10 +2,10 @@
 package conf
 
 import (
+	"encoding/json"
 	"github.com/boris1993/dnsupdater/internal/common"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sync"
@@ -19,6 +19,13 @@ var ConfigFilePath string
 var conf Config
 var errorInInitConfig error
 
+type ExternalAddressResponseType string
+
+const (
+	Text ExternalAddressResponseType = "text"
+	Json ExternalAddressResponseType = "json"
+)
+
 // Config describes the top-level properties in Config.yaml
 type Config struct {
 	System            System       `yaml:"System"`
@@ -28,8 +35,19 @@ type Config struct {
 
 // System describes the System properties in Config.yaml
 type System struct {
-	IPAddrAPI             string `yaml:"IPAddrAPI"`
-	IPv6AddrAPI           string `yaml:"IPv6AddrAPI"`
+	IPv4      PublicIPAddressEndpointConfig `yaml:"IPv4"`
+	IPv6      PublicIPAddressEndpointConfig `yaml:"IPv6"`
+	Endpoints DNSProviderEndpointConfig     `yaml:"Endpoints"`
+}
+
+type PublicIPAddressEndpointConfig struct {
+	Enabled        bool                        `yaml:"Enabled"`
+	IPAddrAPI      string                      `yaml:"IPAddrAPI"`
+	ResponseType   ExternalAddressResponseType `yaml:"ResponseType"`
+	IPAddrJsonPath string                      `yaml:"IPAddrJsonPath"`
+}
+
+type DNSProviderEndpointConfig struct {
 	CloudFlareAPIEndpoint string `yaml:"CloudFlareAPIEndpoint"`
 	AliyunAPIEndpoint     string `yaml:"AliyunAPIEndpoint"`
 }
@@ -82,7 +100,7 @@ func initConfig() error {
 
 	log.Println(common.MsgHeaderLoadingConfig, ConfigFilePath)
 
-	bytes, err := ioutil.ReadFile(ConfigFilePath)
+	bytes, err := os.ReadFile(ConfigFilePath)
 
 	if err != nil {
 		return err
@@ -103,25 +121,6 @@ func initConfig() error {
 
 // printDebugInfo prints the configurations loaded from the file.
 func printDebugInfo() {
-	log.Debugf("%21v: %s", "IPAddrAPI", conf.System.IPAddrAPI)
-	log.Debugf("%21v: %s", "CloudFlareAPIEndpoint", conf.System.CloudFlareAPIEndpoint)
-	log.Debugln()
-
-	for _, item := range conf.CloudFlareRecords {
-		log.Debugln("========== CloudFlare DNS Record ==========")
-		log.Debugf("%10v: %s", "APIKey", item.APIKey)
-		log.Debugf("%10v: %s", "ZoneID", item.ZoneID)
-		log.Debugf("%10v: %s", "AuthEmail", item.AuthEmail)
-		log.Debugf("%10v: %s", "DomainName", item.DomainName)
-		log.Debugln()
-	}
-
-	for _, item := range conf.AliDNSRecords {
-		log.Debugln("========== Aliyun DNS Record ==========")
-		log.Debugf("%15v: %s", "AccessID", item.AccessKeyID)
-		log.Debugf("%15v: %s", "AccessKeySecret", item.AccessKeySecret)
-		log.Debugf("%15v: %s", "RegionID", item.RegionID)
-		log.Debugf("%15v: %s", "DomainName", item.DomainName)
-		log.Debugln()
-	}
+	bytes, _ := json.Marshal(conf)
+	log.Debug(string(bytes))
 }
