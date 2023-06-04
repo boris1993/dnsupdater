@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"github.com/boris1993/dnsupdater/internal/conf"
 	log "github.com/sirupsen/logrus"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 )
 
@@ -41,7 +41,7 @@ func testProcessRecords(t *testing.T) {
 	currentIPv4Address := "192.168.1.1"
 	currentIPv6Address := "240a:38b:5dc0:5d00:e1dd:c7c7:169a:acbb"
 
-	err := ProcessRecords(currentIPv4Address, currentIPv6Address)
+	err := CloudFlareDDNSHandler{}.ProcessRecords(currentIPv4Address, currentIPv6Address)
 	if err != nil {
 		t.Error(err)
 		return
@@ -50,7 +50,7 @@ func testProcessRecords(t *testing.T) {
 
 func prepareMockedQueryDomainResponse() error {
 	mockServerResponseFilePath := testResourcePath + "/mock_cloudflare_dns_response.json"
-	bytes, err := ioutil.ReadFile(mockServerResponseFilePath)
+	bytes, err := os.ReadFile(mockServerResponseFilePath)
 	if err != nil {
 		return err
 	}
@@ -65,7 +65,7 @@ func prepareMockedQueryDomainResponse() error {
 
 func generateMockedUpdateDomainResponse() ([]byte, error) {
 	mockServerResponseFilePath := testResourcePath + "/mock_cloudflare_dns_update_response.json"
-	bytes, err := ioutil.ReadFile(mockServerResponseFilePath)
+	bytes, err := os.ReadFile(mockServerResponseFilePath)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +102,7 @@ func setEndpointToTestServer() error {
 	if err != nil {
 		return err
 	}
-	config.System.CloudFlareAPIEndpoint = testHTTPServer.URL
+	config.System.Endpoints.CloudFlareAPIEndpoint = testHTTPServer.URL
 
 	return nil
 }

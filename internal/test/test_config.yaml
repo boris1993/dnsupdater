@@ -1,9 +1,18 @@
 ---
 System:
-  IPAddrAPI: "https://api.ipify.org/"
-  IPv6AddrAPI: "https://api6.ipify.org"
-  CloudFlareAPIEndpoint: "https://api.cloudflare.com/client/v4"
-  AliyunAPIEndpoint: "https://alidns.aliyuncs.com"
+  IPv4:
+    Enabled: true
+    IPAddrAPI: "https://v4.ident.me/json"
+    ResponseType: "json"
+    IPAddrJsonPath: "$.ip"
+  IPv6:
+    Enabled: true
+    IPAddrAPI: "https://v6.ident.me/json"
+    ResponseType: "json"
+    IPAddrJsonPath: "$.ip"
+  Endpoints:
+    CloudFlareAPIEndpoint: "https://api.cloudflare.com/client/v4"
+    AliyunAPIEndpoint: "https://alidns.aliyuncs.com"
 CloudFlareRecords:
   - APIKey: "dummyApiKey"
     ZoneID: "dummyZoneID"

@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"github.com/boris1993/dnsupdater/internal/conf"
 	log "github.com/sirupsen/logrus"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 )
 
@@ -41,7 +41,7 @@ func testProcessRecords(t *testing.T) {
 	currentIPAddress := "192.168.1.1"
 	currentIPv6Address := "240a:38b:5dc0:5d00:e1dd:c7c7:169a:acbb"
 
-	err := ProcessRecords(currentIPAddress, currentIPv6Address)
+	err := AliyunDDNSHandler{}.ProcessRecords(currentIPAddress, currentIPv6Address)
 	if err != nil {
 		t.Error(err)
 		return
@@ -50,7 +50,7 @@ func testProcessRecords(t *testing.T) {
 
 func prepareMockedServerResponse() error {
 	mockServerResponseFilePath := testResourcePath + "/mock_aliyun_dns_response.json"
-	bytes, err := ioutil.ReadFile(mockServerResponseFilePath)
+	bytes, err := os.ReadFile(mockServerResponseFilePath)
 	if err != nil {
 		return err
 	}
@@ -92,7 +92,7 @@ func setEndpointToTestServer() error {
 	if err != nil {
 		return err
 	}
-	config.System.AliyunAPIEndpoint = testHTTPServer.URL
+	config.System.Endpoints.AliyunAPIEndpoint = testHTTPServer.URL
 
 	return nil
 }
