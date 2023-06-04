@@ -3,11 +3,14 @@ package conf
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"github.com/boris1993/dnsupdater/internal/common"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 )
 
@@ -101,19 +104,36 @@ func initConfig() error {
 	log.Println(common.MsgHeaderLoadingConfig, ConfigFilePath)
 
 	bytes, err := os.ReadFile(ConfigFilePath)
-
 	if err != nil {
 		return err
 	}
 
 	err = yaml.Unmarshal(bytes, &conf)
+	if err != nil {
+		return err
+	}
 
+	err = validateConfig()
 	if err != nil {
 		return err
 	}
 
 	if Debug {
 		printDebugInfo()
+	}
+
+	return nil
+}
+
+func validateConfig() error {
+	if strings.EqualFold(string(conf.System.IPv4.ResponseType), string(Text)) &&
+		strings.EqualFold(string(conf.System.IPv4.ResponseType), string(Json)) {
+		return errors.New(fmt.Sprintf(common.ErrInvalidResponseTypeSpecified, common.IPv4))
+	}
+
+	if strings.EqualFold(string(conf.System.IPv6.ResponseType), string(Text)) &&
+		strings.EqualFold(string(conf.System.IPv6.ResponseType), string(Json)) {
+		return errors.New(fmt.Sprintf(common.ErrInvalidResponseTypeSpecified, common.IPv6))
 	}
 
 	return nil

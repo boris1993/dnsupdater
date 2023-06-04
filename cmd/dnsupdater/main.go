@@ -1,8 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"flag"
+	"fmt"
+	"github.com/PaesslerAG/jsonpath"
 	"github.com/boris1993/dnsupdater/internal/common"
 	"github.com/boris1993/dnsupdater/internal/conf"
 	"github.com/boris1993/dnsupdater/internal/globals"
@@ -31,7 +34,7 @@ func main() {
 	//region Fetch the current external IP address.
 	globals.IPv4Address, err = getCurrentIPv4Address(*config)
 	if err != nil {
-		log.Errorln("Error occurred when checking and processing IPv4 records", err)
+		log.Errorln("Error occurred when checking and processing IPv4 records. Message: ", err)
 	}
 
 	// For those who doesn't have IPv6 internet access,
@@ -99,8 +102,22 @@ func getCurrentIPv4Address(config conf.Config) (string, error) {
 		return "", err
 	}
 
+	var ipAddress string
+	if strings.EqualFold(string(config.System.IPv4.ResponseType), string(conf.Text)) {
+		ipAddress = strings.TrimSpace(string(body))
+	} else {
+		if config.System.IPv4.IPAddrJsonPath == "" {
+			return "", errors.New(fmt.Sprintf(common.ErrJsonPathNotSpecified, common.IPv4))
+		}
+
+		ipAddress, err = parseJsonWithPath(strings.TrimSpace(string(body)), config.System.IPv4.IPAddrJsonPath)
+		if err != nil {
+			return "", err
+		}
+	}
+
 	// Body only contains the IP address
-	ipAddress := strings.TrimSpace(string(body))
+
 	//endregion
 
 	log.Println(common.MsgHeaderCurrentIPv4Addr, ipAddress)
@@ -141,12 +158,40 @@ func getCurrentIPv6Address(config conf.Config) (string, error) {
 		return "", err
 	}
 
-	// Body only contains the IP address
-	ipv6Address := strings.TrimSpace(string(body))
+	var ipv6Address string
+	if strings.EqualFold(string(config.System.IPv6.ResponseType), string(conf.Text)) {
+		ipv6Address = strings.TrimSpace(string(body))
+	} else {
+		if config.System.IPv6.IPAddrJsonPath == "" {
+			return "", errors.New(fmt.Sprintf(common.ErrJsonPathNotSpecified, common.IPv6))
+		}
+
+		ipv6Address, err = parseJsonWithPath(strings.TrimSpace(string(body)), config.System.IPv6.IPAddrJsonPath)
+		if err != nil {
+			return "", err
+		}
+	}
 
 	log.Println(common.MsgHeaderCurrentIPv6Addr, ipv6Address)
 
 	return ipv6Address, nil
+}
+
+func parseJsonWithPath(jsonBody string, jsonPath string) (string, error) {
+	var err error
+	var jsonData interface{}
+
+	err = json.Unmarshal([]byte(jsonBody), &jsonData)
+	if err != nil {
+		return "", err
+	}
+
+	value, err := jsonpath.Get(jsonPath, jsonData)
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprint(value), nil
 }
 
 func init() {

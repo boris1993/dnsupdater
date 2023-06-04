@@ -1,6 +1,9 @@
 // Package common contains all constants needed in this programme
 package common
 
+const IPv4 = "IPv4"
+const IPv6 = "IPv6"
+
 const MsgHeaderDNSRecordUpdateSuccessful = "Successfully updated the DNS record"
 const MsgHeaderCurrentIPv4Addr = "Current IPv4 address is:"
 const MsgHeaderCurrentIPv6Addr = "Current IPv6 address is:"
@@ -33,5 +36,7 @@ const ErrCloudFlareAPIAddressEmpty = "CloudFlare API endpoint address cannot be 
 const ErrAliyunAPIAddressEmpty = "Aliyun API endpoint address cannot be empty"
 const ErrCloudFlareRecordConfigIncomplete = "Incomplete CloudFlare configuration found"
 const ErrAliDNSRecordConfigIncomplete = "Incomplete Aliyun DNS configuration found"
+const ErrJsonPathNotSpecified = "JSON Path for %s is not specified"
+const ErrInvalidResponseTypeSpecified = "The specified response type for %s is invalid"
 
 const WarnAuthEmailDeprecated = "AuthEmail is deprecated. Please use dedicated API token if you are still using Global API Key."
